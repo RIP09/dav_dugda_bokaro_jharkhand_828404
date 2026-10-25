@@ -1,0 +1,13 @@
+// Pre-built student directory seed data for DAV Public School Dugda
+export const STUDENTS = [
+  { id: "s1", name: "Aarav Sharma", roll: "2021001", class: "X-A", section: "A", house: "Ram", gender: "M", father: "Sh. Ramesh Sharma", mother: "Mrs. Sunita Sharma", mobile: "94301 04001", email: "aarav.sharma@davdugda.org", address: "Dugda Coalfield, Bokaro", gc: "2027" },
+  { id: "s2", name: "Diya Patel", roll: "2021002", class: "X-A", section: "A", house: "Sita", gender: "F", father: "Sh. Manoj Patel", mother: "Mrs. Neha Patel", mobile: "94301 04002", email: "diya.patel@davdugda.org", address: "Chandrapura, Bokaro", gc: "2027" },
+  { id: "s3", name: "Kabir Yadav", roll: "2021003", class: "X-B", section: "B", house: "Hanuman", gender: "M", father: "Sh. Rakesh Yadav", mother: "Mrs. Pooja Yadav", mobile: "94301 04003", email: "kabir@davdugda.org", address: "Dugda West, Bokaro", gc: "2027" },
+  { id: "s4", name: "Ananya Ghosh", roll: "2021004", class: "IX-A", section: "A", house: "Laxman", gender: "F", father: "Sh. Amit Ghosh", mother: "Mrs. Anjali Ghosh", mobile: "94301 04004", email: "ananya@davdugda.org", address: "Tennugi, Bokaro", gc: "2028" },
+  { id: "s5", name: "Vihaan Malhotra", roll: "2021005", class: "X-B", section: "B", house: "Ram", gender: "M", father: "Sh. Rajiv Malhotra", mother: "Mrs. Sneha Malhotra", mobile: "94301 04005", email: "vihaan@davdugda.org", address: "Jharia, Bokaro", gc: "2027" },
+  { id: "s6", name: "Ira Nath", roll: "2021006", class: "IX-B", section: "B", house: "Sita", gender: "F", father: "Sh. Narendra Nath", mother: "Mrs. Kiran Nath", mobile: "94301 04006", email: "ira@davdugda.org", address: "Bansjore, Bokaro", gc: "2028" },
+  { id: "s7", name: "Kabir Gupta", roll: "2021007", class: "IX-A", section: "A", house: "Hanuman", gender: "M", father: "Sh. Sanjeev Gupta", mother: "Mrs. Reena Gupta", mobile: "94301 04007", email: "kabirg@davdugda.org", address: "Mancha, Bokaro", gc: "2028" },
+  { id: "s8", name: "Anya Chauhan", roll: "2021008", class: "VIII-A", section: "A", house: "Ram", gender: "F", father: "Sh. Ramesh Chauhan", mother: "Mrs. Kavita Chauhan", mobile: "94301 04008", email: "anya@davdugda.org", address: "Dhanbad, Jharkhand", gc: "2029" },
+  { id: "s9", name: "Reyansh Singh", roll: "2021009", class: "VIII-B", section: "B", house: "Hanuman", gender: "M", father: "Sh. Pankaj Singh", mother: "Mrs. Vimla Singh", mobile: "94301 04009", email: "reyansh@davdugda.org", address: "Saria, Bokaro", gc: "2029" },
+  { id: "s10", name: "Kiara Roy", roll: "2021010", class: "VIII-A", section: "A", house: "Laxman", gender: "F", father: "Sh. Bhabtundu Roy", mother: "Mrs. Sonali Roy", mobile: "94301 04010", email: "kiara@davdugda.org", address: "Sijua, Bokaro", gc: "2029" },
+];

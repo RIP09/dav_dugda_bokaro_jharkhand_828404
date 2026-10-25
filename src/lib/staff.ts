@@ -1,0 +1,21 @@
+// Pre-built staff directory for DAV Public School Dugda (seed data)
+export const STAFF = [
+  { id: "p1", name: "Sh. Rekha Rani", role: "Principal", email: "principal@davdugda.org", phone: "94301 04040", photo: null },
+  { id: "t1", name: "Dr. Sunita Kumari", role: "Headmistress", email: "headmistress@davdugda.org", phone: "94301 04041", photo: null },
+  { id: "t2", name: "Mr. Prakash Kumar", role: "Computer & ICT", email: "prakash@davdugda.org", phone: "94301 04042", photo: null },
+  { id: "t3", name: "Ms. Anita Devi", role: "Maths (Class V–X)", email: "anita@davdugda.org", phone: "94301 04043", photo: null },
+  { id: "t4", name: "Mr. Rajkumar Singh", role: "Science (Class VI–X)", email: "rajkumar@davdugda.org", phone: "94301 04044", photo: null },
+  { id: "t5", name: "Ms. Kavita Sharma", role: "English (Class III–VIII)", email: "kavita@davdugda.org", phone: "94301 04045", photo: null },
+  { id: "t6", name: "Mr. Dinesh Kaushik", role: "Social Studies", email: "dinesh@davdugda.org", phone: "94301 04046", photo: null },
+  { id: "t7", name: "Ms. Nirmala Devi", role: "Hindi (Class I–X)", email: "nirmala@davdugda.org", phone: "94301 04047", photo: null },
+  { id: "t8", name: "Mr. Vineet Kumar", role: "Sanskrit (Class III–VIII)", email: "vineet@davdugda.org", phone: "94301 04048", photo: null },
+  { id: "t9", name: "Ms. Suman Devi", role: "Art & Craft", email: "suman@davdugda.org", phone: "94301 04049", photo: null },
+  { id: "t10", name: "Mr. Mukesh Yadav", role: "PE & Games Coach", email: "mukesh@davdugda.org", phone: "94301 04050", photo: null },
+  { id: "nt1", name: "Ms. Poonam", role: "Visiting Science Teacher", email: "poonam@davdugda.org", phone: "94301 04051", photo: null },
+  { id: "nt2", name: "Mr. Arvind", role: "Visiting Maths Teacher", email: "arvind@davdugda.org", phone: "94301 04052", photo: null },
+  { id: "nc1", name: "Ms. Sunita", role: "Office Superintendent", email: "sunita@davdugda.org", phone: "94301 04053", photo: null },
+  { id: "nc2", name: "Mr. Ramesh", role: "Registry Clerk", email: "ramesh@davdugda.org", phone: "94301 04054", photo: null },
+  { id: "nc3", name: "Ms. Kavita", role: "Exam Incharge", email: "kavita@davdugda.org", phone: "94301 04055", photo: null },
+  { id: "nc4", name: "Mr. Gopal", role: "Laboratory Incharge", email: "gopal@davdugda.org", phone: "94301 04056", photo: null },
+  { id: "nc5", name: "Ms. Laxmi", role: "Transport Co-ordinator", email: "lakshmi@davdugda.org", phone: "94301 04057", photo: null },
+];

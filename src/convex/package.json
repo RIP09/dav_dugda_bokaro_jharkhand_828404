@@ -1,0 +1,10 @@
+{
+  "name": "dav-dugda-sms-convex",
+  "private": true,
+  "scripts": {
+    "dev": "convex dev"
+  },
+  "dependencies": {
+    "convex": "^1.19.1"
+  }
+}
