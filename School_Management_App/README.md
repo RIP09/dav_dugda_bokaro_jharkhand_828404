@@ -1,75 +1,80 @@
-# DAV School Management System
+# DAV School Management System – v2.0
 
-A complete school management system for **DAV Public School, Dugda** (Bokaro, Jharkhand 828404):
-one Laravel REST API that controls everything, and **four native Android apps** built from one Kotlin codebase.
+Complete school software for **DAV Public School, Dugda** (Dugda Coal Washery (BCCL), P.O. Dugda, Distt. Bokaro, Jharkhand 828404 ·
+CBSE Affiliation No. 3430146) · Principal **Prasanjeet Kumar Paul**.
 
-| App | Who uses it | Package | Colour |
+One server (Laravel API + public website) controls everything; every platform talks to it.
+100 % free and open-source tools – no paid service is needed to run it.
+
+| Part | What it is | Folder | Get it |
 |---|---|---|---|
-| **DAV School Admin** | Principal / office (controls the whole system) | `com.davdugda.sms.school` | Indigo |
-| **DAV Staff** | Teachers, accountant, librarian, other staff | `com.davdugda.sms.staff` | Teal |
-| **DAV Parent** | Parents & guardians (all their children in one login) | `com.davdugda.sms.parent` | Red |
-| **DAV Student** | Students | `com.davdugda.sms.student` | Purple |
+| **Server (API)** | Laravel 12 REST API, 49 management modules, PDFs, Excel import/export, audit trail | `backend/` | see `docs/GO_LIVE_GUIDE.md` |
+| **Public school website + Website CMS** | Modern animated school website at `/`, its own admin panel at `/website-admin` (separate login) | `website/` | comes with the server |
+| **Android apps (4)** | School Admin · Staff · Parent · Student (Kotlin + Compose) | `android/` | [releases/](releases/README.md) |
+| **Windows software** | Full management software for the office PC (Electron + Vue) – installer `.exe` + portable `.zip` | `windows/` | [releases/](releases/README.md) |
+| **iPhone apps (source)** | SwiftUI source for the same 4 apps (needs a Mac to build) | `ios/` | `ios/README.md` |
 
-Each app is a separate install with its own icon, and an account can only sign in to the app made for its role.
-The School Admin app creates everything else: sessions, classes, sections, subjects, staff, students
-(and their parent logins), timetables, exams, fees, notices, events, library, transport.
+**Live demo:** website https://dav-dugda-sms.sites.tab.bot/ · API `https://dav-dugda-sms.sites.tab.bot/api/v1/` ·
+downloads https://dav-dugda-sms.sites.tab.bot/downloads/
 
-Feature set and data model follow the two reference projects
-[hrshadhin/school-management-system](https://github.com/hrshadhin/school-management-system)
-(academic years, classes/sections, registrations, student & staff attendance, leave, exams, exam rules, grades, marks, results)
-and [4jean/lav_sms](https://github.com/4jean/lav_sms)
-(student records linked to parents, payments / payment records / receipts, timetables, library books & requests, promotions),
-rebuilt as an API + native mobile apps.
+## Go live
+Step-by-step beginner guide (free hosting): [`docs/GO_LIVE_GUIDE.md`](docs/GO_LIVE_GUIDE.md) (PDF: `docs/DAV_Go_Live_Guide.pdf`).
 
-```
-School_Management_App/
-├── backend/        Laravel 12 REST API (Sanctum tokens, role-based), migrations, demo seeder, API smoke test
-├── android/        Kotlin + Jetpack Compose + Material 3, MVVM, Retrofit, kotlinx.serialization
-│   ├── core/       shared module: API client, models, theme, components, all screens & view models
-│   └── app/        4 product flavors: school, staff, parent, student
-└── README.md
-```
+## Demo logins
 
-### Screenshots
-
-Rendered by the automated app flow test (real apps, real API, demo data):
-
-| School Admin | Staff (teacher) | Parent | Student |
+| Who | Login | Password | Use in |
 |---|---|---|---|
-| ![](docs/screenshots/school_02_dashboard.jpg) | ![](docs/screenshots/staff_02_dashboard.jpg) | ![](docs/screenshots/parent_02_dashboard.jpg) | ![](docs/screenshots/student_02_dashboard.jpg) |
-| ![](docs/screenshots/school_03_students.jpg) | ![](docs/screenshots/staff_03_timetable.jpg) | ![](docs/screenshots/parent_03_attendance.jpg) | ![](docs/screenshots/student_03_homework.jpg) |
-| ![](docs/screenshots/school_04_fees.jpg) | ![](docs/screenshots/staff_04_homework.jpg) | ![](docs/screenshots/parent_04_results.jpg) | ![](docs/screenshots/parent_01_login.jpg) |
+| **Principal – Prasanjeet Kumar Paul** | `principal@davdugda.in` | `principal123` | School Admin app, Windows software |
+| School office (admin) | `admin@davdugda.in` | `admin123` | School Admin app, Windows software |
+| Teacher | `teacher@davdugda.in` | `teacher123` | Staff app, Windows software |
+| Accountant | `accountant@davdugda.in` | `accountant123` | Staff app, Windows software |
+| Librarian | `librarian@davdugda.in` | `librarian123` | Staff app, Windows software |
+| Parent (2 children) | `parent@davdugda.in` or `9431000001` | `parent123` | Parent app |
+| Student (Class 8-A) | `student@davdugda.in` | `student123` | Student app |
+| **Website CMS** | `webadmin@davdugda.in` | `webadmin123` | https://YOUR-SITE/website-admin |
+
+Change every password before real use. For a real school with no demo data run
+`php artisan sms:install principal@davdugda.in "StrongPassword"` (see section 3).
+
+## Modules (same names & folders on every platform)
+
+Students · Parents · Teachers · Staff · Admissions (enquiries → admission) · Academics (sessions, classes, sections, subjects, syllabus,
+study material) · Timetable · Homework · Attendance (students & staff, monthly register) · Leave · Exams (schedules, marks, CBSE grades,
+report cards, admit cards, results lock) · Certificates (TC, character, bonafide) & Promotion · Fees (fee heads, class-wise fee structure,
+concessions, invoices, fines, collection, receipts, reminders) · Accounts (income/expense vouchers) · Payroll (salary structure, payslips)
+· Inventory & Assets · Hostel · Transport (routes, vehicles, documents expiry) · Library · Front office (visitors, postal, calls) ·
+Communication (notices with read status, events & holidays, messages, complaints, notifications) · Reports & charts · Settings, backup,
+Excel import · Audit log.
+
+Code layout: `backend/app/Modules/<Module>/` (models, controllers, `module.php` definition), `android/core/.../modules/<area>/`,
+`windows/renderer/src/modules/<area>/` + `windows/src/main/modules/<feature>/`, `ios/DAVSchool/Modules/<Area>/`.
+
+## Editing system & permanent records
+
+Every module can be edited by the roles allowed to, and **every add/edit/delete is written to the audit log**
+(who, when, old value → new value). Open any record → *History*.
+
+These records are **permanent** – the server refuses to change them (HTTP 423 with the reason) and every app shows a red *Locked* badge:
+
+| Record | Rule |
+|---|---|
+| Fee receipts | Never edited/deleted. Only **Cancel receipt** (with a reason) – it stays on record as CANCELLED and the amount returns to dues. |
+| Issued certificates (TC etc.) | Locked once issued; can only be cancelled with a reason. |
+| Exam marks & results | Locked when the principal clicks **Lock results**. |
+| Paid payslips | Locked once marked paid. |
+| Promotion history, stock movements, audit log | Always permanent. |
+| Admission no., employee ID, invoice no., receipt no. | Can never be changed after creation. |
+
+## Printing (PDF) & Excel
+
+PDFs carry the school logo, affiliation number and the principal's name: fee receipt (school + parent copy), invoice, fee statement,
+report card, student & staff ID cards, admit cards, TC / character / bonafide certificates, salary slip, monthly attendance register,
+and a PDF of any list. Every list exports to Excel/CSV; registers can be imported from Excel – 29 ready templates in
+`docs/import_templates/` (each has a *How to fill* sheet; you get a preview before anything is saved).
 
 ---
 
-## 1. Try it in 2 minutes (demo)
-
-1. Install the APKs (from the `releases/` folder if present, or build them, see section 4).
-   On the phone allow "Install unknown apps" for your file manager / browser.
-2. Open any app and tap **Use demo account**, then **Sign in**.
-
-The APKs point to a free public demo server: `https://dav-dugda-sms.sites.tab.bot/api/v1/`
-(change it any time: login screen → **Server settings**, or Profile → Server address).
-
-### Demo logins
-
-| App | Login | Password |
-|---|---|---|
-| School Admin | `admin@davdugda.in` | `admin123` |
-| Staff (teacher) | `teacher@davdugda.in` | `teacher123` |
-| Staff (accountant) | `accountant@davdugda.in` | `accountant123` |
-| Staff (librarian) | `librarian@davdugda.in` | `librarian123` |
-| Parent (2 children) | `parent@davdugda.in` or `9431000001` | `parent123` |
-| Student (Class 8-A) | `student@davdugda.in` | `student123` |
-
-Other demo teachers use `teacher123`; demo parents created by the seeder use their phone number + `parent123`.
-New logins created from the School app get default passwords (`student123`, `parent123`, `staff123`) unless you set one.
-
-> The demo server is shared and has demo data only. Use your own server (section 3) for real school data.
-
----
-
-## 2. Features by app
+## 2. Features by app (Phase 1 detail)
 
 **School Admin app** (role `admin`)
 - Dashboard: students, staff, parents, today's attendance, fees collected this month, fees due, alerts (pending leave, overdue books)
@@ -126,7 +131,7 @@ php artisan serve --host=0.0.0.0 --port=8000
 
 ```bash
 php artisan migrate --force
-php artisan sms:install principal@davdugda.in "a-strong-password" --name="Principal"
+php artisan sms:install principal@davdugda.in "a-strong-password"   # name defaults to Prasanjeet Kumar Paul
 ```
 
 Then sign in to the **School Admin** app with that email and build the school from the app
