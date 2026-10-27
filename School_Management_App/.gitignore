@@ -1,0 +1,15 @@
+# build outputs & dependencies are never committed
+**/vendor/
+**/node_modules/
+**/build/
+**/.gradle/
+**/.kotlin/
+**/local.properties
+**/.idea/
+*.apk
+*.aab
+!releases/*.apk
+**/.env
+**/database/*.sqlite
+**/storage/logs/*.log
+.DS_Store
