@@ -135,4 +135,30 @@ class EditLockTest extends TestCase
         $this->assertCount(1, $r->json('data.errors'));
         $this->get('/api/v1/backup/download')->assertOk();
     }
+
+    public function test_excel_template_round_trip_import(): void
+    {
+        $this->as('principal@davdugda.in');
+        $resp = $this->get('/api/v1/import/books/template')->assertOk();
+        $tmp = tempnam(sys_get_temp_dir(), 'tpl').'.xlsx';
+        copy($resp->baseResponse->getFile()->getPathname(), $tmp);
+        $book = \PhpOffice\PhpSpreadsheet\IOFactory::load($tmp);
+        $this->assertSame('How to fill', $book->getSheet(1)->getTitle());
+        $sheet = $book->getSheet(0);
+        $headers = $sheet->rangeToArray('A1:'.$sheet->getHighestColumn().'1')[0];
+        $row = [];
+        foreach ($headers as $h) $row[] = match (true) {
+            stripos($h, 'title') !== false => 'Godan', stripos($h, 'author') !== false => 'Munshi Premchand',
+            stripos($h, 'isbn') !== false => '9788126402417', stripos($h, 'cop') !== false => 3, default => null,
+        };
+        $sheet->fromArray($row, null, 'A2');
+        \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($book, 'Xlsx')->save($tmp);
+        $file = new \Illuminate\Http\UploadedFile($tmp, 'books.xlsx', null, null, true);
+        $this->post('/api/v1/import/books', ['file' => $file], ['Accept' => 'application/json'])->assertOk()->assertJsonPath('data.created', 1);
+        $this->assertDatabaseHas('books', ['title' => 'Godan', 'isbn' => '9788126402417']);
+        // same ISBN again → update, not duplicate
+        $file = new \Illuminate\Http\UploadedFile($tmp, 'books.xlsx', null, null, true);
+        $this->post('/api/v1/import/books', ['file' => $file], ['Accept' => 'application/json'])->assertOk()->assertJsonPath('data.updated', 1);
+        $this->assertSame(1, \App\Modules\Library\Models\Book::where('isbn', '9788126402417')->count());
+    }
 }

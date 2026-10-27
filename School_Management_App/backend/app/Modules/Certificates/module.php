@@ -10,7 +10,7 @@ use App\Core\Locks;
 
 return [
 [
-    'key' => 'certificates', 'title' => 'Certificates (TC, Character, Bonafide)', 'title_singular' => 'Certificate saved', 'group' => 'Certificates', 'icon' => 'workspace_premium', 'order' => 90,
+    'key' => 'certificates', 'import' => false, 'title' => 'Certificates (TC, Character, Bonafide)', 'title_singular' => 'Certificate saved', 'group' => 'Certificates', 'icon' => 'workspace_premium', 'order' => 90,
     'lockable' => true, 'lock_note' => 'Issued certificates are permanent. Cancel (with reason) and issue a new one to correct.',
     'model' => Certificate::class, 'with' => ['student.user'], 'title_fn' => fn ($m) => (Certificate::TYPES[$m->type] ?? $m->type).' · '.($m->student?->name ?? ''),
     'subtitle' => ['certificate_no', 'status', 'issue_date'], 'search' => ['certificate_no', 'student.admission_no'],

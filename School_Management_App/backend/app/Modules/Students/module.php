@@ -72,7 +72,7 @@ return [
     ],
 ],
 [
-    'key' => 'student_documents', 'title' => 'Student Documents', 'group' => 'Students', 'icon' => 'folder_shared', 'order' => 11,
+    'key' => 'student_documents', 'import' => false, 'title' => 'Student Documents', 'group' => 'Students', 'icon' => 'folder_shared', 'order' => 11,
     'model' => StudentDocument::class, 'with' => ['student.user'],
     'scope' => function ($q, $user) { if (! $user->isAdmin() && ! $user->isStaff()) $q->whereIn('student_id', $user->ownStudentIds() ?: [0]); },
     'label' => 'title', 'subtitle' => ['student_id', 'type'], 'search' => ['title', 'student.admission_no'],

@@ -30,7 +30,7 @@ class ModuleRegistry
                 foreach ((require $file) as $def) {
                     $def['folder'] = $folder;
                     $def += ['group' => $folder, 'icon' => 'apps', 'label' => 'name', 'subtitle' => [], 'search' => [], 'sort' => '-id',
-                        'with' => [], 'roles' => [], 'actions' => [], 'lockable' => false, 'lock_note' => null, 'import' => false,
+                        'with' => [], 'roles' => [], 'actions' => [], 'lockable' => false, 'lock_note' => null, 'import' => true,
                         'import_key' => null, 'order' => 100];
                     foreach ($def['fields'] as &$f) $f = array_merge(F::make($f['name'], $f['label']), $f);
                     unset($f);

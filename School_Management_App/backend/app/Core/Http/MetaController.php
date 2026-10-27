@@ -45,7 +45,7 @@ class MetaController extends Controller
             if (! in_array($user->role, ModuleRegistry::expandRoles($a['roles'] ?? []), true)) continue;
             $actions[] = array_filter([
                 'key' => $k, 'label' => $a['label'], 'kind' => $a['kind'], 'confirm' => $a['confirm'] ?? null,
-                'needs_reason' => ! empty($a['reason']), 'url' => $a['kind'] === 'pdf' ? 'pdf/'.$a['doc'].'/{id}' : 'records/'.$def['key'].'/{id}/actions/'.$k,
+                'needs_reason' => ! empty($a['reason']), 'doc' => $a['doc'] ?? null, 'url' => $a['kind'] === 'pdf' ? 'pdf/'.$a['doc'].'/{id}' : 'records/'.$def['key'].'/{id}/actions/'.$k,
                 'inputs' => isset($a['inputs']) ? array_map(fn ($f) => array_intersect_key($f, array_flip(['name', 'label', 'type', 'required', 'options', 'default', 'help'])), $a['inputs']) : null,
             ], fn ($v) => $v !== null);
         }
@@ -91,10 +91,13 @@ class MetaController extends Controller
             ['Settings', 'profile', 'My Profile', 'account_circle', true],
         ];
         $groups = [];
-        foreach ($custom as [$g, $screen, $title, $icon, $show]) if ($show) $groups[$g][] = ['key' => $screen, 'title' => $title, 'icon' => $icon, 'screen' => $screen];
+        foreach ($custom as [$g, $screen, $title, $icon, $show]) if ($show) $groups[$g][] = ['key' => $screen, 'type' => 'screen', 'title' => $title, 'icon' => $icon, 'screen' => $screen];
+        $customKeys = array_column($custom, 1);
         foreach (ModuleRegistry::all() as $key => $def) {
             if (! ModuleRegistry::can($def, $user, 'view')) continue;
-            $groups[$def['group']][] = ['key' => $key, 'title' => $def['title'], 'icon' => $def['icon'], 'screen' => $key];
+            // records screens whose key is also a custom screen (timetable, staff_attendance …) get a distinct 'module:' screen id
+            $screen = in_array($key, $customKeys, true) ? 'module:'.$key : $key;
+            $groups[$def['group']][] = ['key' => $screen, 'type' => 'module', 'module' => $key, 'title' => $def['title'], 'icon' => $def['icon'], 'screen' => $screen];
         }
         $out = [];
         foreach (self::GROUP_ORDER as $g) if (! empty($groups[$g])) { $out[] = ['group' => $g, 'items' => $groups[$g]]; unset($groups[$g]); }

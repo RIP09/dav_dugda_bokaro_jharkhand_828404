@@ -57,15 +57,15 @@ class DatabaseSeeder extends Seeder
         foreach ([
             'school_name' => 'DAV Public School, Dugda',
             'school_short_name' => 'DAV Dugda',
-            'address' => 'Dugda, Bokaro, Jharkhand 828404',
-            'phone' => '+91 6549 000000',
-            'email' => 'office@davdugda.in',
+            'address' => 'Dugda Coal Washery (BCCL), P.O. Dugda, Distt. Bokaro, Jharkhand 828404',
+            'phone' => null,   // real number to be filled in Settings (no invented contact details)
+            'email' => null,
             'principal' => 'Prasanjeet Kumar Paul',
             'principal_name' => 'Prasanjeet Kumar Paul',
             'board' => 'CBSE',
-            'affiliation_no' => '(to be added)',
-            'school_code' => '(to be added)',
-            'logo' => null,
+            'affiliation_no' => '3430146',
+            'school_code' => null,
+            'logo' => self::installLogo(),
             'receipt_prefix' => 'RCPT',
             'current_session' => '2026-27',
             'affiliation' => 'CBSE, New Delhi',
@@ -389,7 +389,7 @@ class DatabaseSeeder extends Seeder
         Message::create(['sender_id' => $admin->id, 'receiver_id' => $teachers['Mathematics']->id, 'subject' => 'Timetable change', 'body' => 'From Monday you will also take Class 10-B period 3. Please check the timetable in the app.', 'created_at' => now()->subHours(5)]);
 
         $this->call(Phase2Seeder::class);
-        if (class_exists(\Website\Database\Seeders\WebsiteSeeder::class)) $this->call(\Website\Database\Seeders\WebsiteSeeder::class);
+        if (class_exists(\Website\Database\WebsiteSeeder::class)) $this->call(\Website\Database\WebsiteSeeder::class); // public website content (website/src/Database)
 
         \App\Modules\Audit\Models\AuditLog::$enabled = true;
         $this->command?->info('Demo data seeded for DAV Public School, Dugda.');
@@ -414,5 +414,14 @@ class DatabaseSeeder extends Seeder
                 'qualification' => $staff['qualification'] ?? 'Graduate', 'salary' => $staff['salary'] ?? 20000]);
         }
         return $u;
+    }
+
+    /** Copies the school's real logo (database/seeders/assets) into public storage and returns its storage path. */
+    public static function installLogo(): ?string
+    {
+        $src = database_path('seeders/assets/logo_dav_public_school_dugda.jpg');
+        if (! is_file($src)) return null;
+        \Illuminate\Support\Facades\Storage::disk('public')->put('branding/logo.jpg', file_get_contents($src));
+        return 'branding/logo.jpg';
     }
 }
