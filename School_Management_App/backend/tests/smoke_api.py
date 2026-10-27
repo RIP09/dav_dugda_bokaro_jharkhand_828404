@@ -9,6 +9,7 @@ passed, failed = 0, []
 
 def call(method, path, token=None, body=None):
     req = urllib.request.Request(BASE + path, method=method, data=json.dumps(body).encode() if body is not None else None)
+    req.add_header('User-Agent', 'DAV-smoke-test/2.0')  # some CDNs block the default Python-urllib agent
     req.add_header("Accept", "application/json"); req.add_header("Content-Type", "application/json")
     if token: req.add_header("Authorization", "Bearer " + token)
     try:
