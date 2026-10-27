@@ -1,0 +1,46 @@
+appId: in.davdugda.sms.desktop
+productName: DAV School Management
+copyright: DAV Public School, Dugda
+directories:
+  output: dist
+  buildResources: build
+files:
+  - src/**/*
+  - renderer-dist/**/*
+  - build/icon.png
+  - build/icon.ico
+  - package.json
+asar: true
+compression: maximum
+electronLanguages:
+  - en-US
+  - en-GB
+  - hi
+executableName: DAV School Management
+win:
+  target:
+    - target: nsis
+      arch: [x64]
+    - target: zip
+      arch: [x64]
+  icon: build/icon.ico
+  legalTrademarks: DAV Public School, Dugda
+  artifactName: DAV_School_Management_Portable_${version}.${ext}
+  signAndEditExecutable: true
+nsis:
+  oneClick: false
+  perMachine: false
+  allowElevation: true
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: always
+  createStartMenuShortcut: true
+  shortcutName: DAV School Management
+  menuCategory: false
+  runAfterFinish: true
+  installerIcon: build/icon.ico
+  uninstallerIcon: build/icon.ico
+  installerHeaderIcon: build/icon.ico
+  uninstallDisplayName: DAV School Management
+  artifactName: DAV_School_Management_Setup_${version}.${ext}
+  deleteAppDataOnUninstall: false
+publish: null

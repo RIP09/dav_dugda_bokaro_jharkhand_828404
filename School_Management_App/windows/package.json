@@ -1,0 +1,29 @@
+{
+  "name": "dav-school-management",
+  "productName": "DAV School Management",
+  "version": "2.0.0",
+  "description": "DAV Public School, Dugda - School Management System for Windows PC",
+  "author": "DAV Public School Dugda",
+  "license": "MIT",
+  "main": "src/main/index.js",
+  "homepage": "https://github.com/RIP09/dav_dugda_bokaro_jharkhand_828404",
+  "scripts": {
+    "dev": "vite --config renderer/vite.config.mjs",
+    "build:renderer": "vite build --config renderer/vite.config.mjs",
+    "start": "npm run build:renderer && electron .",
+    "electron": "electron .",
+    "dist:win": "npm run build:renderer && electron-builder --win nsis zip --x64 --publish never",
+    "dist:dir": "npm run build:renderer && electron-builder --win dir --x64 --publish never"
+  },
+  "devDependencies": {
+    "@fontsource-variable/inter": "^5.3.0",
+    "@vitejs/plugin-vue": "^5.2.4",
+    "chart.js": "^4.4.9",
+    "electron": "^33.4.11",
+    "electron-builder": "^25.1.8",
+    "material-icons": "^1.13.14",
+    "vite": "^6.3.5",
+    "vue": "^3.5.16",
+    "vue-router": "^4.5.1"
+  }
+}
