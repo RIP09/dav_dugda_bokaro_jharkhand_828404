@@ -1,0 +1,10 @@
+# Xcode / SwiftPM build output
+build/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+*.ipa
+*.dSYM.zip
+*.dSYM
+.build/
+.swiftpm/

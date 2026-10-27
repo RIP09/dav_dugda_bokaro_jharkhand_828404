@@ -1,0 +1,234 @@
+Unit checks
+  ✓ normalizedBase host only
+  ✓ normalizedBase keeps /api/v1
+  ✓ Indian money format – ₹1,25,000
+  ✓ money paise – ₹1,625.50
+  ✓ locked record → edit/delete off
+  ✓ ref label shown
+  ✓ action 'when' + cancel needs reason
+  ✓ envelope without data
+
+Server: http://127.0.0.1:8090/api/v1/
+  ✓ school profile – DAV Public School, Dugda, principal Prasanjeet Kumar Paul
+
+[school] principal@davdugda.in
+    (login throttled, waiting 15 s)
+  ✓ login app=school – Prasanjeet Kumar Paul (admin)
+  ✓ auth/me – children: 0
+  ✓ meta/modules – 49 modules
+  ✓ meta/menu – 23 groups, 70 items
+  ✓ dashboard/charts – 7 cards, 6 charts
+  ✓ dashboard (phase 1) – 6 stats
+  ✓ notifications – 1 items, unread 1
+  ✓ search ‘ku’ – 26 hits
+  ✓ notices – 7
+  ✓ events – 7
+  ✓ messages inbox – 0
+  ✓ homework – 76
+  ✓ exams – 5
+  ✓ sections – 22, first LKG - A
+  ✓ attendance sheet – 6 students
+  ✓ attendance/report – 6 students
+  ✓ subjects of class – 5
+  ✓ marks sheet – 6 rows, max 80, locked false
+  ✓ students of section – 6
+  ✓ report card of student – 53.75%
+  ✓ daily attendance – 22 sections
+  ✓ timetable mine – 36
+  ✓ fees summary – collected ₹17,21,350, due ₹4,53,550
+  ✓ invoices – 500
+  ✓ payments – 300
+  ✓ staff sheet – 17 staff
+  ✓ audit – 50 rows
+  -- generic engine over all 49 modules --
+  ✓ records/enquiries – 6 rows, 19 fields · detail "Diya Gupta"
+  ✓ records/students – 116 rows, 27 fields · detail "Test Kumar"
+  ✓ records/student_documents – 0 rows, 5 fields
+  ✓ records/parents – 114 rows, 11 fields · detail "Test Parent"
+  ✓ records/teachers – 13 rows, 16 fields · detail "New Teacher"
+  ✓ records/staff – 19 rows, 17 fields · detail "New Teacher"
+  ✓ records/student_attendance – 3435 rows, 7 fields · detail "Nikhil Agarwal · 27 Oct 2026"
+  ✓ records/staff_attendance – 497 rows, 6 fields · detail "Vijay Pandey · 27 Oct 2026"
+  ✓ records/leaves – 3 rows, 8 fields · detail "Sunil Kumar Mishra · 15 Oct–16 Oct"
+  ✓ records/academic_years – 2 rows, 4 fields · detail "2025-26"
+  ✓ records/classes – 15 rows, 4 fields · detail "Nursery"
+  ✓ records/sections – 22 rows, 5 fields · detail "Nursery-C"
+  ✓ records/subjects – 86 rows, 5 fields · detail "Rhymes (Nursery)"
+  ✓ records/syllabus – 21 rows, 7 fields · detail "Computer – Chapter 3"
+  ✓ records/study_materials – 7 rows, 7 fields · detail "Computer – revision notes"
+  ✓ records/timetable – 685 rows, 8 fields · detail "Computer · Saturday 12:30"
+  ✓ records/homework – 76 rows, 8 fields · detail "Prepare a project chart on Coal Mining in Jharkhand"
+  ✓ records/exams – 5 rows, 7 fields, 1 locked · detail "Surprise Test"
+  ✓ records/exam_schedules – 255 rows, 8 fields · detail "Computer Science · 04 Mar 2027"
+  ✓ records/marks – 1423 rows, 10 fields · detail "Test Kumar · Computer"
+  ✓ records/grades – 8 rows, 5 fields · detail "E"
+  ✓ records/certificates – 2 rows, 12 fields, 1 locked · detail "Character Certificate · Aarav Mahato"
+  ✓ records/promotions – 0 rows, 10 fields
+  ✓ records/fee_types – 6 rows, 3 fields · detail "Computer Fee"
+  ✓ records/fee_structures – 39 rows, 6 fields · detail "Class 12 · Computer Fee"
+  ✓ records/concessions – 6 rows, 6 fields · detail "Nikhil Gupta · 50%"
+  ✓ records/invoices – 571 rows, 13 fields · detail "Science Exhibition Fee · Test Kumar"
+  ✓ records/payments – 477 rows, 10 fields, 5 locked · detail "RCPT261000002 · ₹1,625.00"
+  ✓ records/account_heads – 8 rows, 3 fields · detail "Hall rent"
+  ✓ records/transactions – 33 rows, 10 fields · detail "Donation · ₹21,663.00"
+  ✓ records/salary_structures – 18 rows, 15 fields · detail "Alok Thakur"
+  ✓ records/payslips – 36 rows, 12 fields · detail "Alok Thakur · 2026-10"
+  ✓ records/inventory_items – 7 rows, 8 fields · detail "Tube light"
+  ✓ records/stock_movements – 11 rows, 6 fields, 5 locked · detail "IN 3 × Tube light"
+  ✓ records/assets – 6 rows, 10 fields · detail "Inverter + batteries"
+  ✓ records/hostels – 2 rows, 5 fields · detail "Gargi Girls Hostel"
+  ✓ records/hostel_rooms – 8 rows, 6 fields · detail "Gargi Girls Hostel · Room G-104"
+  ✓ records/hostel_allocations – 10 rows, 6 fields · detail "Saurabh Verma · Aryabhatta Boys Hostel B-102"
+  ✓ records/transport_routes – 5 rows, 9 fields · detail "Route 9 - Test"
+  ✓ records/vehicles – 4 rows, 10 fields · detail "JH09 CD 1357"
+  ✓ records/books – 21 rows, 8 fields · detail "Test Book"
+  ✓ records/book_issues – 11 rows, 8 fields · detail "Test Book → Ritika Thakur"
+  ✓ records/visitors – 5 rows, 10 fields · detail "Ramesh Electricals"
+  ✓ records/postal – 2 rows, 7 fields · detail "TC documents"
+  ✓ records/call_logs – 2 rows, 7 fields · detail "Gupta Stationers · Order A4 paper"
+  ✓ records/notices – 7 rows, 8 fields · detail "Test notice"
+  ✓ records/events – 7 rows, 7 fields · detail "Test event"
+  ✓ records/complaints – 2 rows, 8 fields · detail "Weekly test for Class 8"
+  ✓ records/audit – 87 rows, 8 fields, 5 locked · detail "Update · settings · #11"
+  ✓ edit locked receipt → 423 – This record is locked and cannot be changed. Issued fee receipts are permanent. Use “Cancel receipt” (with a reason) to reverse it, then collect again.
+  ✓ receipt PDF download – Receipt_RCPT261000002.pdf, 64440 bytes, starts %PDF
+
+[school] admin@davdugda.in
+  ✓ login app=school – School Office (Admin) (admin)
+  ✓ auth/me – children: 0
+  ✓ meta/modules – 49 modules
+  ✓ meta/menu – 23 groups, 70 items
+  ✓ dashboard/charts – 7 cards, 6 charts
+  ✓ dashboard (phase 1) – 6 stats
+  ✓ notifications – 0 items, unread 0
+  ✓ search ‘ku’ – 26 hits
+  ✓ notices – 7
+  ✓ events – 7
+  ✓ messages inbox – 0
+  ✓ homework – 76
+  ✓ exams – 5
+  ✓ sections – 22, first LKG - A
+  ✓ attendance sheet – 6 students
+  ✓ attendance/report – 6 students
+  ✓ subjects of class – 5
+  ✓ marks sheet – 6 rows, max 80, locked false
+  ✓ students of section – 6
+  ✓ report card of student – 53.75%
+  ✓ daily attendance – 22 sections
+  ✓ timetable mine – 36
+  ✓ fees summary – collected ₹17,21,350, due ₹4,53,550
+  ✓ invoices – 500
+  ✓ payments – 300
+  ✓ staff sheet – 17 staff
+  ✓ audit – 50 rows
+
+[staff] teacher@davdugda.in
+  ✓ login app=staff – Sunil Kumar Mishra (teacher)
+  ✓ auth/me – children: 0
+  ✓ login refused in parent app – This account is a teacher account. Please use the Staff app.
+  ✓ meta/modules – 34 modules
+  ✓ meta/menu – 18 groups, 46 items
+  ✓ dashboard/charts – 4 cards, 3 charts
+  ✓ dashboard (phase 1) – 4 stats
+  ✓ notifications – 1 items, unread 1
+  ✓ search ‘ku’ – 25 hits
+  ✓ notices – 5
+  ✓ events – 7
+  ✓ messages inbox – 1
+  ✓ homework – 17
+  ✓ exams – 5
+  ✓ sections – 22, first LKG - A
+  ✓ attendance sheet – 6 students
+  ✓ attendance/report – 6 students
+  ✓ subjects of class – 5
+  ✓ marks sheet – 6 rows, max 80, locked false
+  ✓ students of section – 6
+  ✓ report card of student – 53.75%
+  ✓ daily attendance refused for teacher (403, as designed)
+  ✓ timetable mine – 36
+
+[staff] accountant@davdugda.in
+  ✓ login app=staff – Pankaj Agarwal (accountant)
+  ✓ auth/me – children: 0
+  ✓ meta/modules – 48 modules
+  ✓ meta/menu – 23 groups, 63 items
+  ✓ dashboard/charts – 7 cards, 6 charts
+  ✓ dashboard (phase 1) – 4 stats
+  ✓ notifications – 1 items, unread 1
+  ✓ search ‘ku’ – 26 hits
+  ✓ notices – 5
+  ✓ events – 7
+  ✓ messages inbox – 0
+  ✓ homework – 76
+  ✓ exams – 5
+  ✓ sections – 22, first LKG - A
+  · attendance sheet / marks skipped (accountant doesn't take attendance)
+  ✓ daily attendance refused for accountant (403, as designed)
+  ✓ timetable mine – 0
+  ✓ fees summary – collected ₹17,21,350, due ₹4,53,550
+  ✓ invoices – 500
+  ✓ payments – 300
+
+[staff] librarian@davdugda.in
+  ✓ login app=staff – Meena Kumari (librarian)
+  ✓ auth/me – children: 0
+  ✓ meta/modules – 34 modules
+  ✓ meta/menu – 17 groups, 44 items
+  ✓ dashboard/charts – 4 cards, 3 charts
+  ✓ dashboard (phase 1) – 4 stats
+  ✓ notifications – 1 items, unread 1
+  ✓ search ‘ku’ – 23 hits
+  ✓ notices – 5
+  ✓ events – 7
+  ✓ messages inbox – 0
+  ✓ homework – 76
+  ✓ exams – 5
+  ✓ sections – 22, first LKG - A
+  · attendance sheet / marks skipped (librarian doesn't take attendance)
+  ✓ daily attendance refused for librarian (403, as designed)
+  ✓ timetable mine – 0
+
+[parent] parent@davdugda.in
+  ✓ login app=parent – Rajesh Kumar Mahato (parent)
+  ✓ auth/me – children: 2
+  ✓ login refused in student app – This account is a parent account. Please use the Parent app.
+  ✓ meta/modules – 29 modules
+  ✓ meta/menu – 14 groups, 38 items
+  ✓ dashboard/charts – 4 cards, 2 charts
+  ✓ dashboard (phase 1) – 4 stats
+  ✓ notifications – 2 items, unread 2
+  ✓ search ‘ku’ – 2 hits
+  ✓ notices – 5
+  ✓ events – 7
+  ✓ messages inbox – 1
+  ✓ homework – 4
+  ✓ exams – 3
+  ✓ attendance/my – 75.0% of 30
+  ✓ report-card/my – 6 subjects, 72.92%
+  ✓ timetable – 36 periods
+  ✓ own invoices – 4
+
+[student] student@davdugda.in
+  ✓ login app=student – Aarav Mahato (student)
+  ✓ auth/me – children: 0
+  ✓ meta/modules – 29 modules
+  ✓ meta/menu – 14 groups, 38 items
+  ✓ dashboard/charts – 4 cards, 2 charts
+  ✓ dashboard (phase 1) – 4 stats
+  ✓ notifications – 2 items, unread 2
+  ✓ search ‘ku’ – 1 hits
+  ✓ notices – 5
+  ✓ events – 7
+  ✓ messages inbox – 0
+  ✓ homework – 4
+  ✓ exams – 3
+  ✓ attendance/my – 87.9% of 33
+  ✓ report-card/my – 7 subjects, 95.54%
+  ✓ timetable – 37 periods
+  ✓ own invoices – 8
+
+Locked records seen: audit=6, certificates=1, exams=1, payments=6, stock_movements=6
+Server modules not mapped to an iOS area folder: none
+
+RESULT: 207 passed, 0 failed, 2 skipped
+EXIT=0

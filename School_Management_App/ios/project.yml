@@ -1,0 +1,105 @@
+# XcodeGen spec – one codebase, four apps (like the Android product flavors).
+# On a Mac:  brew install xcodegen  &&  cd ios && xcodegen generate  &&  open DAVSchool.xcodeproj
+name: DAVSchool
+options:
+  bundleIdPrefix: com.davdugda.sms
+  deploymentTarget:
+    iOS: "16.0"
+  createIntermediateGroups: true
+  groupSortPosition: top
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    MARKETING_VERSION: "2.0.0"
+    CURRENT_PROJECT_VERSION: "2"
+    TARGETED_DEVICE_FAMILY: "1,2"
+    ENABLE_PREVIEWS: YES
+    DEVELOPMENT_TEAM: ""          # set your (free) Apple ID team in Xcode → Signing & Capabilities
+    CODE_SIGN_STYLE: Automatic
+    ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+    INFOPLIST_KEY_UILaunchScreen_Generation: YES
+targetTemplates:
+  DAVApp:
+    type: application
+    platform: iOS
+    sources:
+      - path: DAVSchool
+        excludes:
+          - "**/*.md"
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: NO
+targets:
+  DAVSchool:
+    templates: [DAVApp]
+    sources:
+      - path: Targets/School
+    settings:
+      base:
+        PRODUCT_NAME: "DAV School Admin"
+        PRODUCT_BUNDLE_IDENTIFIER: com.davdugda.sms.school
+        INFOPLIST_FILE: Targets/School/Info.plist
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+  DAVStaff:
+    templates: [DAVApp]
+    sources:
+      - path: Targets/Staff
+    settings:
+      base:
+        PRODUCT_NAME: "DAV Staff"
+        PRODUCT_BUNDLE_IDENTIFIER: com.davdugda.sms.staff
+        INFOPLIST_FILE: Targets/Staff/Info.plist
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+  DAVParent:
+    templates: [DAVApp]
+    sources:
+      - path: Targets/Parent
+    settings:
+      base:
+        PRODUCT_NAME: "DAV Parent"
+        PRODUCT_BUNDLE_IDENTIFIER: com.davdugda.sms.parent
+        INFOPLIST_FILE: Targets/Parent/Info.plist
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+  DAVStudent:
+    templates: [DAVApp]
+    sources:
+      - path: Targets/Student
+    settings:
+      base:
+        PRODUCT_NAME: "DAV Student"
+        PRODUCT_BUNDLE_IDENTIFIER: com.davdugda.sms.student
+        INFOPLIST_FILE: Targets/Student/Info.plist
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+schemes:
+  DAVSchool:
+    build:
+      targets:
+        DAVSchool: all
+    run:
+      config: Debug
+    archive:
+      config: Release
+  DAVStaff:
+    build:
+      targets:
+        DAVStaff: all
+    run:
+      config: Debug
+    archive:
+      config: Release
+  DAVParent:
+    build:
+      targets:
+        DAVParent: all
+    run:
+      config: Debug
+    archive:
+      config: Release
+  DAVStudent:
+    build:
+      targets:
+        DAVStudent: all
+    run:
+      config: Debug
+    archive:
+      config: Release
