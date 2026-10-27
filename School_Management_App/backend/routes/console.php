@@ -1,8 +1,8 @@
 <?php
 
-use App\Models\AcademicYear;
-use App\Models\Grade;
-use App\Models\Setting;
+use App\Modules\Academics\Models\AcademicYear;
+use App\Modules\Exams\Models\Grade;
+use App\Modules\Settings\Models\Setting;
 use App\Models\User;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;

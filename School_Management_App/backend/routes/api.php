@@ -1,20 +1,20 @@
 <?php
 
-use App\Http\Controllers\Api\AcademicController;
-use App\Http\Controllers\Api\AttendanceController;
-use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\DashboardController;
-use App\Http\Controllers\Api\ExamController;
-use App\Http\Controllers\Api\FeeController;
-use App\Http\Controllers\Api\HomeworkController;
-use App\Http\Controllers\Api\LeaveController;
-use App\Http\Controllers\Api\LibraryController;
-use App\Http\Controllers\Api\MessageController;
-use App\Http\Controllers\Api\NoticeController;
-use App\Http\Controllers\Api\StudentController;
-use App\Http\Controllers\Api\TimetableController;
-use App\Http\Controllers\Api\TransportController;
-use App\Http\Controllers\Api\UserController;
+use App\Modules\Academics\Http\AcademicController;
+use App\Modules\Attendance\Http\AttendanceController;
+use App\Modules\Auth\Http\AuthController;
+use App\Modules\Dashboard\Http\DashboardController;
+use App\Modules\Exams\Http\ExamController;
+use App\Modules\Fees\Http\FeeController;
+use App\Modules\Homework\Http\HomeworkController;
+use App\Modules\Leave\Http\LeaveController;
+use App\Modules\Library\Http\LibraryController;
+use App\Modules\Communication\Http\MessageController;
+use App\Modules\Communication\Http\NoticeController;
+use App\Modules\Students\Http\StudentController;
+use App\Modules\Timetable\Http\TimetableController;
+use App\Modules\Transport\Http\TransportController;
+use App\Modules\Staff\Http\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*

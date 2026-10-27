@@ -2,6 +2,10 @@
 
 namespace App\Models;
 
+use App\Modules\Academics\Models\Section;
+use App\Modules\Staff\Models\Staff;
+use App\Modules\Students\Models\Student;
+use App\Modules\Timetable\Models\TimetableEntry;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
