@@ -388,9 +388,14 @@ class DatabaseSeeder extends Seeder
         Message::create(['sender_id' => $demoParent->id, 'receiver_id' => $classTeacher->id, 'subject' => 'Re: Aarav - Half yearly performance', 'body' => 'Thank you madam/sir, we will make sure he practises daily.', 'created_at' => now()->subDay(), 'read_at' => now()]);
         Message::create(['sender_id' => $admin->id, 'receiver_id' => $teachers['Mathematics']->id, 'subject' => 'Timetable change', 'body' => 'From Monday you will also take Class 10-B period 3. Please check the timetable in the app.', 'created_at' => now()->subHours(5)]);
 
+        $this->call(Phase2Seeder::class);
+        if (class_exists(\Website\Database\Seeders\WebsiteSeeder::class)) $this->call(\Website\Database\Seeders\WebsiteSeeder::class);
+
+        \App\Modules\Audit\Models\AuditLog::$enabled = true;
         $this->command?->info('Demo data seeded for DAV Public School, Dugda.');
         $this->command?->table(['App', 'Login', 'Password'], [
-            ['School (admin)', 'admin@davdugda.in', 'admin123'],
+            ['School (Principal)', 'principal@davdugda.in', 'principal123'],
+            ['School (office admin)', 'admin@davdugda.in', 'admin123'],
             ['Staff (teacher)', 'teacher@davdugda.in', 'teacher123'],
             ['Staff (accountant)', 'accountant@davdugda.in', 'accountant123'],
             ['Staff (librarian)', 'librarian@davdugda.in', 'librarian123'],

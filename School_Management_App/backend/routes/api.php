@@ -25,7 +25,7 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('v1')->group(function () {
     Route::get('ping', fn () => ['data' => ['status' => 'ok', 'app' => config('app.name'), 'time' => now()->toIso8601String()]]);
     Route::post('auth/login', [AuthController::class, 'login'])->middleware('throttle:10,1');
-    Route::get('school', [AcademicController::class, 'settings']);
+    Route::get('school', [\App\Modules\Settings\Http\SettingsController::class, 'show']);
 
     Route::middleware('auth:sanctum')->group(function () {
         require __DIR__.'/api_v2.php';   // Phase 2: generic modules, edit/lock, PDFs, import/export, notifications
