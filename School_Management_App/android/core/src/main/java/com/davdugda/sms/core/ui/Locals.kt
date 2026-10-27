@@ -16,6 +16,9 @@ val LocalSnackbar = staticCompositionLocalOf { SnackbarHostState() }
 /** Parent app: the child currently selected in the header switcher (student id). */
 val LocalChild = staticCompositionLocalOf<MutableState<Int?>> { error("No child state") }
 
+/** Navigate to any route of the app (see core/nav/Routes.kt). */
+val LocalNavigate = staticCompositionLocalOf<(String) -> Unit> { {} }
+
 /** Creates a ViewModel scoped to the current screen, handing it the app container. */
 @Composable
 inline fun <reified VM : ViewModel> screenViewModel(key: String? = null, crossinline create: (AppContainer) -> VM): VM {

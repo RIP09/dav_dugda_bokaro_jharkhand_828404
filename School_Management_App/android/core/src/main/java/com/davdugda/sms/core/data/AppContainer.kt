@@ -16,7 +16,10 @@ import java.util.concurrent.TimeUnit
 
 /** Tiny manual DI container: one per app process. */
 class AppContainer(context: Context, val config: AppConfig) {
+    val appContext: Context = context.applicationContext
     val session = SessionStore(context.applicationContext, config.defaultBaseUrl)
+    /** Server module registry + menu (API v2). */
+    val meta = MetaRepository(this)
 
     val json = Json {
         ignoreUnknownKeys = true
@@ -78,10 +81,11 @@ class AppContainer(context: Context, val config: AppConfig) {
                 401 -> "Session expired. Please sign in again."
                 403 -> "You are not allowed to do this."
                 404 -> "Not found."
+                423 -> "This record is locked and can't be changed."
                 else -> "Server error (${t.code()})."
             }
         }
-        is IOException -> "Cannot reach the school server. Check your internet or the server address in Settings."
+        is IOException -> t.message?.takeIf { it.endsWith(".") && !it.contains("Failed to connect") && !it.contains("Unable to resolve") } ?: "Cannot reach the school server. Check your internet or the server address in Settings."
         else -> t.message ?: "Something went wrong."
     }
 }

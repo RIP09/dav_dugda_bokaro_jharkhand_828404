@@ -289,3 +289,8 @@ fun prettyDate(d: String?): String = runCatching { LocalDate.parse(d!!.take(10))
 fun shortDate(d: String?): String = runCatching { LocalDate.parse(d!!.take(10)).format(DateTimeFormatter.ofPattern("d MMM")) }.getOrDefault(d ?: "")
 fun today(): String = LocalDate.now().toString()
 fun String.cap(): String = replace('_', ' ').replaceFirstChar { it.uppercase() }
+
+@Composable
+fun Modifier.verticalScrollSafe(): Modifier = this.then(Modifier.verticalScroll(rememberScrollState()))
+
+fun Modifier.clickableRow(onClick: () -> Unit): Modifier = this.clickable(onClick = onClick)

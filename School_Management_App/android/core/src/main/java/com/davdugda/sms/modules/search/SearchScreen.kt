@@ -1,0 +1,101 @@
+package com.davdugda.sms.modules.search
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewModelScope
+import com.davdugda.sms.core.data.*
+import com.davdugda.sms.core.nav.*
+import com.davdugda.sms.core.ui.*
+import com.davdugda.sms.core.ui.components.*
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.serialization.json.*
+
+import com.davdugda.sms.modules.dashboard.*
+import com.davdugda.sms.modules.auth.*
+import com.davdugda.sms.modules.profile.*
+import com.davdugda.sms.modules.students.*
+import com.davdugda.sms.modules.parents.*
+import com.davdugda.sms.modules.teachers.*
+import com.davdugda.sms.modules.staff.*
+import com.davdugda.sms.modules.academics.*
+import com.davdugda.sms.modules.attendance.*
+import com.davdugda.sms.modules.timetable.*
+import com.davdugda.sms.modules.homework.*
+import com.davdugda.sms.modules.exams.*
+import com.davdugda.sms.modules.fees.*
+import com.davdugda.sms.modules.library.*
+import com.davdugda.sms.modules.transport.*
+import com.davdugda.sms.modules.hostel.*
+import com.davdugda.sms.modules.admissions.*
+import com.davdugda.sms.modules.certificates.*
+import com.davdugda.sms.modules.accounts.*
+import com.davdugda.sms.modules.payroll.*
+import com.davdugda.sms.modules.inventory.*
+import com.davdugda.sms.modules.front_office.*
+import com.davdugda.sms.modules.communication.*
+import com.davdugda.sms.modules.reports.*
+import com.davdugda.sms.modules.settings.*
+import com.davdugda.sms.modules.search.*
+import com.davdugda.sms.modules.generic.*
+
+
+class SearchViewModel(c: AppContainer) : BaseViewModel(c) {
+    var q by mutableStateOf("")
+    var state by mutableStateOf<Load<List<SearchHit>>?>(null)
+    fun run() {
+        val text = q.trim()
+        if (text.length < 2) { state = null; return }
+        viewModelScope.launch {
+            state = Load.Loading
+            state = try { Load.Ok(api.search(text).data) } catch (e: CancellationException) { throw e } catch (e: Throwable) { Load.Err(c.errorMessage(e)) }
+        }
+    }
+}
+
+/** One box to find students, staff, parents, books, invoices, receipts … */
+@Composable
+fun SearchScreen() {
+    val vm = screenViewModel { SearchViewModel(it) }
+    val navigate = LocalNavigate.current
+    val c = LocalContainer.current
+    LaunchedEffect(vm.q) { delay(350); vm.run() }
+    Column(Modifier.fillMaxSize().padding(horizontal = 16.dp)) {
+        SearchField(vm.q, { vm.q = it }, "Search name, admission no, phone, book, receipt…")
+        Spacer(Modifier.height(8.dp))
+        when (val s = vm.state) {
+            null -> EmptyState("Type at least 2 letters to search the whole school.", Icons.Outlined.Search)
+            is Load.Loading -> Box(Modifier.fillMaxWidth().padding(32.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+            is Load.Err -> ErrorBox(s.message) { vm.run() }
+            is Load.Ok -> ScreenList {
+                if (s.data.isEmpty()) item { EmptyState("Nothing found for “${vm.q}”.") }
+                s.data.groupBy { it.module }.forEach { (module, hits) ->
+                    item { SectionHeader(c.meta.modules[module]?.title ?: module.cap()) }
+                    items(hits) { h ->
+                        InfoCard(h.title, subtitle = h.subtitle, leading = { IconBadge(iconFor(c.meta.modules[module]?.icon, module), tintFor(module)) }, onClick = {
+                            val id = h.id.asText()
+                            navigate(when {
+                                h.screen != null && h.screen != module && h.screen in CustomScreens -> Routes.screen(h.screen)
+                                else -> routeForRecord(module, id)
+                            })
+                        })
+                    }
+                }
+            }
+        }
+    }
+}

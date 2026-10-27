@@ -210,7 +210,8 @@ data class Homework(
 @Serializable data class ReviewSubmission(val status: String, val grade: String?, val feedback: String?)
 
 // ---- Notices & events ------------------------------------------------------------------------
-@Serializable data class Notice(val id: Int, val title: String, val body: String = "", val audience: String = "all", val publishDate: String? = null, val isPinned: Boolean = false, val authorName: String? = null)
+@Serializable data class Notice(val id: Int, val title: String, val body: String = "", val audience: String = "all", val publishDate: String? = null, val isPinned: Boolean = false, val authorName: String? = null,
+    val isRead: Boolean? = null, val readAt: String? = null, val readsCount: Int? = null)
 @Serializable data class NoticeCreate(val title: String, val body: String, val audience: String, val isPinned: Boolean = false)
 @Serializable data class SchoolEvent(val id: Int, val title: String, val description: String? = null, val startDate: String = "", val endDate: String? = null, val location: String? = null, val type: String = "event")
 @Serializable data class EventCreate(val title: String, val description: String?, val startDate: String, val endDate: String?, val location: String?, val type: String)

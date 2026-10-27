@@ -7,6 +7,12 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
+import retrofit2.http.QueryMap
+import retrofit2.http.Multipart
+import retrofit2.http.Part
+import kotlinx.serialization.json.JsonObject
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 
 /** Retrofit description of the Laravel REST API (backend/routes/api.php). */
 interface SmsApi {
@@ -111,4 +117,38 @@ interface SmsApi {
     @GET("messages/contacts") suspend fun contacts(): ApiList<UserLite>
     @POST("messages") suspend fun sendMessage(@Body body: MessageCreate): ApiItem<Message>
     @GET("messages/{id}") suspend fun openMessage(@Path("id") id: Int): ApiItem<Message>
+
+    // ===================== API v2 (docs/API_V2_CONTRACT.md) =====================
+    @GET("school") suspend fun schoolInfo(): JsonObject
+    @GET("meta/modules") suspend fun metaModules(): ApiList<ModuleMeta>
+    @GET("meta/menu") suspend fun metaMenu(): ApiList<MenuGroup>
+
+    @GET("records/{module}") suspend fun records(@Path("module") module: String, @QueryMap query: Map<String, String> = emptyMap()): RecordPage
+    @GET("records/{module}/{id}") suspend fun record(@Path("module") module: String, @Path("id") id: String): ApiItem<JsonObject>
+    @POST("records/{module}") suspend fun createRecord(@Path("module") module: String, @Body body: JsonObject): ApiItem<JsonObject>
+    @PUT("records/{module}/{id}") suspend fun updateRecord(@Path("module") module: String, @Path("id") id: String, @Body body: JsonObject): ApiItem<JsonObject>
+    @DELETE("records/{module}/{id}") suspend fun deleteRecord(@Path("module") module: String, @Path("id") id: String): AnyResult
+    @GET("records/{module}/{id}/history") suspend fun recordHistory(@Path("module") module: String, @Path("id") id: String): AuditPage
+    @POST("records/{module}/{id}/actions/{action}") suspend fun recordAction(@Path("module") module: String, @Path("id") id: String, @Path("action") action: String, @Body body: JsonObject): AnyResult
+
+    @GET("dashboard/charts") suspend fun dashboardCharts(): JsonObject
+    @GET("search") suspend fun search(@Query("q") q: String): ApiList<SearchHit>
+    @GET("notifications") suspend fun notifications(): NotificationPage
+    @POST("notifications/{id}/read") suspend fun readNotification(@Path("id") id: Int): AnyResult
+    @POST("notifications/read-all") suspend fun readAllNotifications(): AnyResult
+    @POST("notices/{id}/read") suspend fun readNotice(@Path("id") id: Int): AnyResult
+    @GET("notices/{id}/reads") suspend fun noticeReads(@Path("id") id: Int): AnyResult
+    @GET("records/audit") suspend fun auditRecords(@QueryMap query: Map<String, String> = emptyMap()): AuditPage
+    @GET("audit") suspend fun audit(@QueryMap query: Map<String, String> = emptyMap()): AuditPage
+
+    @GET("attendance/report") suspend fun attendanceReport(@Query("section_id") sectionId: Int, @Query("month") month: String): AnyResult
+    @GET("attendance/daily") suspend fun attendanceDaily(@Query("date") date: String): AnyResult
+    @POST("fees/reminders") suspend fun feeReminders(@Body body: JsonObject): AnyResult
+    @POST("fees/generate") suspend fun generateFees(@Body body: JsonObject): AnyResult
+    @POST("payroll/run") suspend fun payrollRun(@Body body: JsonObject): AnyResult
+    @POST("promotion/run") suspend fun promotionRun(@Body body: JsonObject): AnyResult
+
+    @Multipart @POST("uploads") suspend fun upload(@Part file: MultipartBody.Part, @Part("folder") folder: RequestBody? = null): ApiItem<UploadResult>
+    @Multipart @POST("students/{id}/photo") suspend fun studentPhoto(@Path("id") id: Int, @Part photo: MultipartBody.Part): AnyResult
+    @Multipart @POST("import/{module}") suspend fun importFile(@Path("module") module: String, @Part file: MultipartBody.Part, @Part("dry_run") dryRun: RequestBody): ApiItem<ImportResult>
 }
