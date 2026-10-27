@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Section extends Model
 {
-    protected $fillable = ['class_id', 'name', 'capacity', 'teacher_id', 'room'];
+    use \App\Core\Concerns\Auditable, \App\Core\Concerns\Lockable;
+
+    protected $guarded = ['id'];
 
     public function schoolClass() { return $this->belongsTo(SchoolClass::class, 'class_id'); }
     public function teacher() { return $this->belongsTo(User::class, 'teacher_id')->select('id', 'name', 'phone', 'role'); }

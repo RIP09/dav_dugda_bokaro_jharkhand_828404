@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class ExamSchedule extends Model
 {
-    protected $fillable = ['exam_id', 'class_id', 'subject_id', 'exam_date', 'start_time', 'end_time', 'max_marks', 'pass_marks'];
+    use \App\Core\Concerns\Auditable, \App\Core\Concerns\Lockable;
+
+    protected $guarded = ['id'];
     protected $casts = ['exam_date' => 'date:Y-m-d'];
     protected $appends = ['subject_name'];
     protected $hidden = ['subject'];

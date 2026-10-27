@@ -17,5 +17,6 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         // Always answer the API with JSON (the Android apps never want an HTML error page).
+        $exceptions->render(fn (\App\Core\Exceptions\RecordLockedException $e) => $e->render());
         $exceptions->shouldRenderJsonWhen(fn (Request $request) => $request->is('api/*') || $request->expectsJson());
     })->create();

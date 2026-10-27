@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Message extends Model
 {
-    protected $fillable = ['sender_id', 'receiver_id', 'subject', 'body', 'read_at'];
+    use \App\Core\Concerns\Auditable, \App\Core\Concerns\Lockable;
+
+    protected $guarded = ['id'];
     protected $casts = ['read_at' => 'datetime'];
     protected $appends = ['sender_name', 'receiver_name'];
     protected $hidden = ['sender', 'receiver'];

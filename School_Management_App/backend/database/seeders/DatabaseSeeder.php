@@ -51,6 +51,7 @@ class DatabaseSeeder extends Seeder
     {
         mt_srand(828404);
         DB::disableQueryLog();
+        \App\Modules\Audit\Models\AuditLog::$enabled = false; // seeding is not an edit
 
         // ---- School profile -------------------------------------------------------------------
         foreach ([
@@ -59,7 +60,14 @@ class DatabaseSeeder extends Seeder
             'address' => 'Dugda, Bokaro, Jharkhand 828404',
             'phone' => '+91 6549 000000',
             'email' => 'office@davdugda.in',
-            'principal' => 'Dr. R. K. Sinha',
+            'principal' => 'Prasanjeet Kumar Paul',
+            'principal_name' => 'Prasanjeet Kumar Paul',
+            'board' => 'CBSE',
+            'affiliation_no' => '(to be added)',
+            'school_code' => '(to be added)',
+            'logo' => null,
+            'receipt_prefix' => 'RCPT',
+            'current_session' => '2026-27',
             'affiliation' => 'CBSE, New Delhi',
             'website' => null,
             'late_fine_per_day' => '10',
@@ -77,8 +85,8 @@ class DatabaseSeeder extends Seeder
         }
 
         // ---- People: admin & staff -----------------------------------------------------------------
-        $admin = $this->user('Deepanshu (Admin)', 'admin@davdugda.in', User::ADMIN, 'admin123', 'male');
-        $this->user('Dr. R. K. Sinha', 'principal@davdugda.in', User::ADMIN, 'admin123', 'male');
+        $admin = $this->user('Prasanjeet Kumar Paul', 'principal@davdugda.in', User::ADMIN, 'principal123', 'male');
+        $this->user('School Office (Admin)', 'admin@davdugda.in', User::ADMIN, 'admin123', 'male');
 
         $teacherNames = [
             ['Sunil Kumar Mishra', 'male', 'Mathematics'], ['Rina Sharma', 'female', 'English'], ['Amit Kumar Singh', 'male', 'Science'],

@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Notice extends Model
 {
-    protected $fillable = ['title', 'body', 'audience', 'class_id', 'posted_by', 'publish_date', 'is_pinned'];
+    use \App\Core\Concerns\Auditable, \App\Core\Concerns\Lockable;
+
+    protected $guarded = ['id'];
     protected $casts = ['publish_date' => 'date:Y-m-d', 'is_pinned' => 'boolean'];
     protected $appends = ['author_name'];
     protected $hidden = ['author'];

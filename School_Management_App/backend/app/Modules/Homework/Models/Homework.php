@@ -10,8 +10,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Homework extends Model
 {
+    use \App\Core\Concerns\Auditable, \App\Core\Concerns\Lockable;
+
     protected $table = 'homework';
-    protected $fillable = ['class_id', 'section_id', 'subject_id', 'teacher_id', 'title', 'description', 'assigned_on', 'due_date'];
+    protected $guarded = ['id'];
     protected $casts = ['assigned_on' => 'date:Y-m-d', 'due_date' => 'date:Y-m-d'];
     protected $appends = ['subject_name', 'teacher_name', 'class_label'];
     protected $hidden = ['subject', 'teacher', 'schoolClass', 'section'];

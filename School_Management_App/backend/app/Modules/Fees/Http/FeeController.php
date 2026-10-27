@@ -139,8 +139,8 @@ class FeeController extends Controller
             'billed' => round((float) $inv->billed, 2),
             'collected' => round((float) $inv->collected, 2),
             'due' => round((float) $inv->billed - (float) $inv->collected, 2),
-            'today' => round((float) Payment::where('paid_on', '>=', now()->toDateString())->sum('amount'), 2),
-            'this_month' => round((float) Payment::where('paid_on', '>=', now()->startOfMonth()->toDateString())->sum('amount'), 2),
+            'today' => round((float) Payment::where('status', '!=', 'cancelled')->where('paid_on', '>=', now()->toDateString())->sum('amount'), 2),
+            'this_month' => round((float) Payment::where('status', '!=', 'cancelled')->where('paid_on', '>=', now()->startOfMonth()->toDateString())->sum('amount'), 2),
             'overdue_invoices' => Invoice::where('status', '!=', 'paid')->where('due_date', '<', now()->toDateString())->count(),
         ]);
     }

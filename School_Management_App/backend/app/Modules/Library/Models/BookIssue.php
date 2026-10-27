@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class BookIssue extends Model
 {
-    protected $fillable = ['book_id', 'user_id', 'issued_on', 'due_on', 'returned_on', 'fine', 'issued_by'];
+    use \App\Core\Concerns\Auditable, \App\Core\Concerns\Lockable;
+
+    protected $guarded = ['id'];
     protected $casts = ['issued_on' => 'date:Y-m-d', 'due_on' => 'date:Y-m-d', 'returned_on' => 'date:Y-m-d', 'fine' => 'float'];
     protected $appends = ['status', 'book_title', 'member_name'];
     protected $hidden = ['book', 'user'];

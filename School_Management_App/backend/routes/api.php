@@ -28,6 +28,8 @@ Route::prefix('v1')->group(function () {
     Route::get('school', [AcademicController::class, 'settings']);
 
     Route::middleware('auth:sanctum')->group(function () {
+        require __DIR__.'/api_v2.php';   // Phase 2: generic modules, edit/lock, PDFs, import/export, notifications
+
         $all = 'role:admin,teacher,accountant,librarian,staff,parent,student';
         $staff = 'role:admin,teacher,accountant,librarian,staff';
         $admin = 'role:admin';

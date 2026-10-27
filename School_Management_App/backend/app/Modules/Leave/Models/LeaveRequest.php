@@ -8,7 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class LeaveRequest extends Model
 {
-    protected $fillable = ['user_id', 'student_id', 'type', 'from_date', 'to_date', 'reason', 'status', 'reviewed_by', 'review_note'];
+    use \App\Core\Concerns\Auditable, \App\Core\Concerns\Lockable;
+
+    protected $guarded = ['id'];
     protected $casts = ['from_date' => 'date:Y-m-d', 'to_date' => 'date:Y-m-d'];
     protected $appends = ['applicant_name', 'student_name', 'reviewer_name', 'days'];
     protected $hidden = ['applicant', 'student', 'reviewer'];

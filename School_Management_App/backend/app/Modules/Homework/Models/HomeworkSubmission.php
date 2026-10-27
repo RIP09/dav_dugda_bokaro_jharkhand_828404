@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class HomeworkSubmission extends Model
 {
-    protected $fillable = ['homework_id', 'student_id', 'content', 'submitted_at', 'status', 'grade', 'feedback'];
+    use \App\Core\Concerns\Auditable, \App\Core\Concerns\Lockable;
+
+    protected $guarded = ['id'];
     protected $casts = ['submitted_at' => 'datetime'];
     protected $appends = ['student_name'];
     protected $hidden = ['student'];

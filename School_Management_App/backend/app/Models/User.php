@@ -15,6 +15,8 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
+    use \App\Core\Concerns\Auditable, \App\Core\Concerns\Lockable;
+
     use HasApiTokens, HasFactory, Notifiable;
 
     public const ADMIN = 'admin';
@@ -34,6 +36,8 @@ class User extends Authenticatable
         'staff' => self::STAFF_ROLES,
         'parent' => [self::PARENT],
         'student' => [self::STUDENT],
+        // Windows PC app / iOS / any client that adapts its menu to the role
+        'web' => [self::ADMIN, ...self::STAFF_ROLES, self::PARENT, self::STUDENT],
     ];
 
     protected $fillable = [

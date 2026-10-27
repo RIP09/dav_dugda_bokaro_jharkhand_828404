@@ -14,9 +14,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Student extends Model
 {
-    protected $fillable = ['user_id', 'admission_no', 'roll_no', 'class_id', 'section_id', 'academic_year_id', 'parent_id', 'transport_route_id', 'admission_date', 'blood_group', 'religion', 'category', 'aadhaar_no', 'father_name', 'mother_name', 'guardian_phone', 'house', 'status'];
+    use \App\Core\Concerns\Auditable, \App\Core\Concerns\Lockable;
+
+    protected $guarded = ['id'];
     protected $casts = ['admission_date' => 'date:Y-m-d'];
     protected $appends = ['name', 'class_label'];
+    protected array $immutable = ['admission_no'];
 
     public function user() { return $this->belongsTo(User::class); }
     public function schoolClass() { return $this->belongsTo(SchoolClass::class, 'class_id'); }

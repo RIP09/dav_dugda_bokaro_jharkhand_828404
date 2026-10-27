@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class StaffAttendance extends Model
 {
-    protected $fillable = ['user_id', 'date', 'status', 'in_time', 'out_time', 'remark', 'marked_by'];
+    use \App\Core\Concerns\Auditable, \App\Core\Concerns\Lockable;
+
+    protected $guarded = ['id'];
     // 'date' is stored as a plain Y-m-d string so lookups by date match on every database engine
 
     public function user() { return $this->belongsTo(User::class); }

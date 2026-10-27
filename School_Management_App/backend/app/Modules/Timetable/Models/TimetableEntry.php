@@ -10,7 +10,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class TimetableEntry extends Model
 {
-    protected $fillable = ['class_id', 'section_id', 'subject_id', 'teacher_id', 'day', 'start_time', 'end_time', 'room'];
+    use \App\Core\Concerns\Auditable, \App\Core\Concerns\Lockable;
+
+    protected $guarded = ['id'];
     protected $appends = ['subject_name', 'teacher_name', 'class_label', 'day_name'];
     protected $hidden = ['subject', 'teacher', 'schoolClass', 'section'];
 

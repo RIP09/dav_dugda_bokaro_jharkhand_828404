@@ -18,7 +18,7 @@ class AuthController extends Controller
         $data = $request->validate([
             'login' => 'required|string',
             'password' => 'required|string',
-            'app' => 'nullable|in:school,staff,parent,student',
+            'app' => 'nullable|in:school,staff,parent,student,web',
             'device_name' => 'nullable|string|max:100',
         ]);
 
