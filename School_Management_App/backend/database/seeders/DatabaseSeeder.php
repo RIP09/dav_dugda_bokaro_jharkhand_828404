@@ -305,14 +305,18 @@ class DatabaseSeeder extends Seeder
         }
 
         // ---- Homework ----------------------------------------------------------------------------
-        $hwTitles = ['Complete exercise %s from the textbook', 'Write a short essay on "%s"', 'Revise chapter %s and solve the worksheet', 'Prepare a project chart on %s'];
-        $topics = ['3.2', 'My School', '5', 'Water Conservation', '7', 'Pollution', '2', 'Digital India', '9', 'Festivals of Jharkhand'];
+        $hwTemplates = [
+            ['Complete exercise %s from the textbook', ['3.2', '4.1', '5.3', '2.4', '6.2']],
+            ['Write a short essay on "%s"', ['My School', 'Water Conservation', 'Digital India', 'Festivals of Jharkhand', 'Swachh Bharat']],
+            ['Revise chapter %s and solve the worksheet', ['5', '7', '2', '9', '4']],
+            ['Prepare a project chart on %s', ['Pollution', 'the Solar System', 'Our Constitution', 'Healthy Food', 'Coal Mining in Jharkhand']],
+        ];
         foreach ($sections as $sec) {
             $subs = Subject::where('class_id', $sec->class_id)->get();
             for ($h = 0; $h < 4; $h++) {
                 $sub = $subs[$h % $subs->count()];
                 $hw = Homework::create(['class_id' => $sec->class_id, 'section_id' => $sec->id, 'subject_id' => $sub->id, 'teacher_id' => $sub->teacher_id,
-                    'title' => sprintf($hwTitles[$h], $topics[($h * 2 + $sec->id) % count($topics)]),
+                    'title' => sprintf($hwTemplates[$h][0], $hwTemplates[$h][1][$sec->id % count($hwTemplates[$h][1])]),
                     'description' => "Do it neatly in your {$sub->name} notebook. Bring it to class on the due date.",
                     'assigned_on' => Carbon::today()->subDays(6 - $h * 2)->toDateString(), 'due_date' => Carbon::today()->addDays($h * 2 - 2)->toDateString()]);
                 if ($h < 2) {

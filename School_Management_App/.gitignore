@@ -13,3 +13,4 @@
 **/database/*.sqlite
 **/storage/logs/*.log
 .DS_Store
+backend/bin/
