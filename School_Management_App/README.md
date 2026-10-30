@@ -10,15 +10,15 @@ One server (Laravel API + public website) controls everything; every platform ta
 |---|---|---|---|
 | **Server (API)** | Laravel 12 REST API, 49 management modules, PDFs, Excel import/export, audit trail | `backend/` | see `docs/GO_LIVE_GUIDE.md` |
 | **Public school website + Website CMS** | Modern animated school website at `/`, its own admin panel at `/website-admin` (separate login) | `website/` | comes with the server |
-| **Android apps (4)** | School Admin · Staff · Parent · Student (Kotlin + Compose) | `android/` | [releases/](releases/README.md) |
-| **Windows software** | Full management software for the office PC (Electron + Vue) – installer `.exe` + portable `.zip` | `windows/` | [releases/](releases/README.md) |
+| **Android apps (4)** | School Admin · Staff · Parent · Student (Kotlin + Compose) | `android/` | paused — apps coming soon |
+| **Windows software** | Full management software for the office PC (Electron + Vue) – installer `.exe` + portable `.zip` | `windows/` | paused — apps coming soon |
 | **iPhone apps (source)** | SwiftUI source for the same 4 apps (needs a Mac to build) | `ios/` | `ios/README.md` |
 
 **Live demo:** website https://dav-dugda-sms.sites.tab.bot/ · API `https://dav-dugda-sms.sites.tab.bot/api/v1/` ·
-downloads https://dav-dugda-sms.sites.tab.bot/downloads/
+app downloads: paused — apps coming soon
 
 ## Go live
-Step-by-step beginner guide (free hosting): [`docs/GO_LIVE_GUIDE.md`](docs/GO_LIVE_GUIDE.md) (PDF: `docs/DAV_Go_Live_Guide.pdf`).
+Step-by-step beginner guide (free hosting): [`docs/GO_LIVE_GUIDE.md`](docs/GO_LIVE_GUIDE.md).
 
 ## Demo logins
 
