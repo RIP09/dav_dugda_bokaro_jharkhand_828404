@@ -1,18 +1,21 @@
 # Downloads – DAV School Management System v2.0.1 (latest)
 
-The installers are too large to keep inside this git repository, so they are served from the free demo server
-(and the public website's Downloads page: https://dav-dugda-sms.sites.tab.bot/downloads). Check a download against its SHA-256 if you like
+> **Public downloads are paused (30 Oct 2026)** until the apps are ready for public use. The website's Downloads page
+> shows "School apps — coming soon" and the links below return 404. To turn downloads back on: set `DOWNLOADS_ENABLED=true`
+> in the server's `.env` and ship the release files again (see `build_deploy.sh`). The SHA-256 values below stay valid for the v2.0.1 files.
+
+The installers are too large to keep inside this git repository. Check a file against its SHA-256 if you like
 (`certutil -hashfile FILE SHA256` on Windows, `sha256sum FILE` on Linux/Mac).
 
 | File | Size | Link | SHA-256 |
 |---|---|---|---|
-| `DAV_School_Admin_v2.0.1.apk` | 11.9 MB | [Download](https://dav-dugda-sms.sites.tab.bot/downloads/DAV_School_Admin_v2.0.1.apk) | `5aab342cb876c76abc69eb1a7b8d547ee146546ee8acf8beb376417ad70c59ee` |
-| `DAV_Staff_v2.0.1.apk` | 11.9 MB | [Download](https://dav-dugda-sms.sites.tab.bot/downloads/DAV_Staff_v2.0.1.apk) | `3da64a2f38b33ffdc27637c12f1ffee276429a60ce9098717132aaa056b0110e` |
-| `DAV_Parent_v2.0.1.apk` | 11.9 MB | [Download](https://dav-dugda-sms.sites.tab.bot/downloads/DAV_Parent_v2.0.1.apk) | `992112f6db309da7c9ce715daea1062ed3784b2936486d6d945486d390154908` |
-| `DAV_Student_v2.0.1.apk` | 11.9 MB | [Download](https://dav-dugda-sms.sites.tab.bot/downloads/DAV_Student_v2.0.1.apk) | `a2a0e0a01d313874230db19d7ce60be53bfe0e71abaf6362b098b296ab001667` |
-| `DAV_School_Management_Setup_2.0.1.exe` | 72.3 MB | [Download](https://dav-dugda-sms.sites.tab.bot/downloads/DAV_School_Management_Setup_2.0.1.exe) | `7a19a1e4de9998507782e604c2057a097103b01e63922379716b63dabf025d30` |
-| `DAV_School_Management_Portable_2.0.1.zip` | 97.7 MB | [Download](https://dav-dugda-sms.sites.tab.bot/downloads/DAV_School_Management_Portable_2.0.1.zip) | `d91428521ed6ca391c564bc3844772de61cd8021a40145233b2ebd866c87fb62` |
-| `DAV_Go_Live_Guide.pdf` | 1.2 MB | [Download](https://dav-dugda-sms.sites.tab.bot/downloads/DAV_Go_Live_Guide.pdf) | `a716688702aba734302db67ddcb8b4abb76eddc4d0c5a8e726b8671cec98c9aa` |
+| `DAV_School_Admin_v2.0.1.apk` | 11.9 MB | paused | `5aab342cb876c76abc69eb1a7b8d547ee146546ee8acf8beb376417ad70c59ee` |
+| `DAV_Staff_v2.0.1.apk` | 11.9 MB | paused | `3da64a2f38b33ffdc27637c12f1ffee276429a60ce9098717132aaa056b0110e` |
+| `DAV_Parent_v2.0.1.apk` | 11.9 MB | paused | `992112f6db309da7c9ce715daea1062ed3784b2936486d6d945486d390154908` |
+| `DAV_Student_v2.0.1.apk` | 11.9 MB | paused | `a2a0e0a01d313874230db19d7ce60be53bfe0e71abaf6362b098b296ab001667` |
+| `DAV_School_Management_Setup_2.0.1.exe` | 72.3 MB | paused | `7a19a1e4de9998507782e604c2057a097103b01e63922379716b63dabf025d30` |
+| `DAV_School_Management_Portable_2.0.1.zip` | 97.7 MB | paused | `d91428521ed6ca391c564bc3844772de61cd8021a40145233b2ebd866c87fb62` |
+| `DAV_Go_Live_Guide.pdf` | 1.2 MB | paused | `a716688702aba734302db67ddcb8b4abb76eddc4d0c5a8e726b8671cec98c9aa` |
 
 **What's new in 2.0.1:** every section now says its class ("Class 6 – A"), you pick the class first and only that class's
 sections are offered, the server refuses a section from another class, and Class XI–XII sections can carry a stream

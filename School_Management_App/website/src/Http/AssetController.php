@@ -53,13 +53,16 @@ class AssetController extends Controller
     /** Big release files (apps, guides) kept in storage/app/downloads, served at /downloads/{file}. */
     public function release(string $file)
     {
+        // App downloads are paused until the apps are ready for public use (config website.app_downloads / DOWNLOADS_ENABLED).
+        abort_unless(config('website.app_downloads'), 404);
         abort_if(Str::contains($file, ['..', '/']), 404);
         $path = Media::releasePath($file);
         abort_unless($path, 404);
         $types = ['apk' => 'application/vnd.android.package-archive', 'exe' => 'application/vnd.microsoft.portable-executable',
             'zip' => 'application/zip', 'pdf' => 'application/pdf', 'txt' => 'text/plain'];
         $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
-        $headers = ['Content-Type' => $types[$ext] ?? 'application/octet-stream', 'Cache-Control' => 'public, max-age=86400'];
+        // Short edge cache so pausing downloads (DOWNLOADS_ENABLED=false) takes effect within minutes.
+        $headers = ['Content-Type' => $types[$ext] ?? 'application/octet-stream', 'Cache-Control' => 'public, max-age=300'];
 
         return in_array($ext, ['pdf', 'txt'], true)
             ? response()->file($path, $headers)

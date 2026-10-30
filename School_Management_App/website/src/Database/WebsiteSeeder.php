@@ -225,15 +225,15 @@ HTML],
             DB::table('site_achievements')->insert(['category' => $c, 'title' => $t, 'student_name' => $s, 'class_name' => $cl, 'score' => $sc, 'year' => '2022', 'sort' => $k, 'is_published' => true, 'created_at' => $now, 'updated_at' => $now]);
         }
 
-        // ---------- Downloads: the school management apps v2.0.1 + go-live guide (served from /downloads/) ----------
-        $dl = [
+        // ---------- Downloads: the school management apps v2.0.1 (served from /downloads/), only when app downloads are enabled ----------
+        // The Go-Live guide is an internal document and is not published on the website.
+        $dl = ! config('website.app_downloads') ? [] : [
             ['School Admin app (Android)', 'apps', '/downloads/DAV_School_Admin_v2.0.1.apk', 'For the principal and school office · version 2.0.1'],
             ['Staff app (Android)', 'apps', '/downloads/DAV_Staff_v2.0.1.apk', 'For teachers and staff · version 2.0.1'],
             ['Parent app (Android)', 'apps', '/downloads/DAV_Parent_v2.0.1.apk', 'For parents · version 2.0.1'],
             ['Student app (Android)', 'apps', '/downloads/DAV_Student_v2.0.1.apk', 'For students · version 2.0.1'],
             ['School Management for Windows — installer', 'apps', '/downloads/DAV_School_Management_Setup_2.0.1.exe', 'Windows 10/11 setup · version 2.0.1'],
             ['School Management for Windows — portable', 'apps', '/downloads/DAV_School_Management_Portable_2.0.1.zip', 'No install needed: unzip and run · version 2.0.1'],
-            ['Go-Live Guide (PDF)', 'guides', '/downloads/DAV_Go_Live_Guide.pdf', 'How to put the school management system live'],
         ];
         foreach ($dl as $k => [$t, $c, $f, $d]) {
             DB::table('site_downloads')->insert(['title' => $t, 'category' => $c, 'file' => $f, 'description' => $d, 'sort' => $k, 'is_published' => true, 'created_at' => $now, 'updated_at' => $now]);

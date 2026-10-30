@@ -10,9 +10,17 @@ class DownloadController extends Controller
 
     public function index()
     {
+        $appsEnabled = (bool) config('website.app_downloads');
+        $items = Download::published()->whereNotNull('file')->orderBy('sort')->get();
+        if (! $appsEnabled) {
+            // While app downloads are paused, nothing from the apps section or the /downloads/ release folder is listed.
+            $items = $items->reject(fn ($d) => $d->category === 'apps' || str_starts_with((string) $d->file, '/downloads/'));
+        }
+
         return view('website::site.downloads.index', [
-            'groups' => Download::published()->whereNotNull('file')->orderBy('sort')->get()->groupBy('category'),
+            'groups' => $items->groupBy('category'),
             'sections' => self::SECTIONS,
+            'appsComingSoon' => ! $appsEnabled,
         ]);
     }
 }

@@ -15,6 +15,8 @@ class WebsiteServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
+        $this->mergeConfigFrom(dirname(__DIR__).'/config/website.php', 'website');
+
         // Website-admin login: its own guard and its own table (site_admins), separate from the school-management users.
         config([
             'auth.guards.webadmin' => ['driver' => 'session', 'provider' => 'site_admins'],
@@ -33,6 +35,16 @@ class WebsiteServiceProvider extends ServiceProvider
         if (config('app.env') === 'production' && str_starts_with((string) config('app.url'), 'https://')) {
             \Illuminate\Support\Facades\URL::forceRootUrl(rtrim(config('app.url'), '/'));
             \Illuminate\Support\Facades\URL::forceScheme('https');
+            // Also make the request itself carry the public address, so URLs built from it (the login page's
+            // "intended" URL, back() after a wrong password or a validation error) never point at the internal host.
+            if (! $this->app->runningInConsole()) {
+                $req = $this->app['request'];
+                $host = (string) parse_url(config('app.url'), PHP_URL_HOST);
+                $req->headers->set('host', $host);
+                $req->server->set('HTTP_HOST', $host);
+                $req->server->set('HTTPS', 'on');
+                $req->server->set('SERVER_PORT', 443);
+            }
         }
         $root = dirname(__DIR__);
         $this->loadViewsFrom($root.'/resources/views', 'website');
