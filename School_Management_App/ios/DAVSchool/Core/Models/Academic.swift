@@ -36,8 +36,8 @@ public struct Section: Decodable, Identifiable, Hashable {
     }
     private let _label: String?
 
-    /// "Class 5 - A"
-    public var label: String { _label ?? ([className, name].compactMap { $0 }.joined(separator: " - ")) }
+    /// "Class 5 – A" (the server sends it as `label` from v2.0.1; built the same way for older servers)
+    public var label: String { _label ?? ([className, name].compactMap { $0 }.joined(separator: " – ")) }
 }
 
 public struct Subject: Decodable, Identifiable, Hashable {

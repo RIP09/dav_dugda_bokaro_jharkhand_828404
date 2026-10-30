@@ -15,6 +15,7 @@ return [
     'key' => 'exams', 'title' => 'Exams', 'group' => 'Exams', 'icon' => 'quiz', 'order' => 80, 'lockable' => true,
     'lock_note' => 'After “Lock results (final)” the exam and all its marks become permanent.',
     'model' => Exam::class, 'label' => 'name', 'subtitle' => ['term', 'start_date', 'is_published'], 'sort' => '-start_date',
+    'option_fn' => fn ($m) => $m->name.(($y = \App\Modules\Academics\Models\AcademicYear::find($m->academic_year_id)?->title) ? ' ('.$y.')' : ''),
     'roles' => ['view' => ['all'], 'create' => [], 'update' => [], 'delete' => []],
     'fields' => [
         F::text('name', 'Exam', ['required' => true, 'list' => true]),

@@ -230,8 +230,31 @@ class RecordsController extends Controller
         foreach (($def['extra_rules'] ?? []) as $n => $r) $rules[$n] = $r;
         $v = Validator::make($input, $rules, [], $labels);
         $data = $v->validate();
+        $this->checkDependencies($def, $data, $m);
         if (isset($def['validate'])) ($def['validate'])($data, $m);
         return $data;
+    }
+
+    /** A Section/Subject must belong to the chosen Class, a Student to the chosen Section/Class (see ModuleRegistry::withDependencies). */
+    protected function checkDependencies(array $def, array $data, ?Model $m): void
+    {
+        $errors = [];
+        foreach ($def['fields'] as $f) {
+            $dep = $f['ref']['depends_on'] ?? null;
+            if ($f['type'] !== 'ref' || ! $dep) continue;
+            $child = array_key_exists($f['name'], $data) ? $data[$f['name']] : $m?->getAttribute($f['name']);
+            $parent = array_key_exists($dep['field'], $data) ? $data[$dep['field']] : $m?->getAttribute($dep['field']);
+            if (! $child || ! $parent) continue;
+            if (! array_key_exists($f['name'], $data) && ! array_key_exists($dep['field'], $data)) continue;
+            $ref = ModuleRegistry::get($f['ref']['module']);
+            if (! $ref) continue;
+            $row = $ref['model']::query()->find($child);
+            if ($row && (string) $row->getAttribute($dep['key']) !== (string) $parent) {
+                $parentLabel = collect($def['fields'])->firstWhere('name', $dep['field'])['label'] ?? 'class';
+                $errors[$f['name']] = '“'.ModuleRegistry::optionFor($f['ref']['module'], $row).'” does not belong to the chosen '.mb_strtolower($parentLabel).'.';
+            }
+        }
+        if ($errors) throw ValidationException::withMessages($errors);
     }
 
     protected function existsRule(array $f)
@@ -297,6 +320,7 @@ class RecordsController extends Controller
             }
             $lock = method_exists($m, 'lockReason') ? $m->lockReason() : null;
             $row['_title'] = ModuleRegistry::titleFor($def['key'], $m);
+            $row['_option'] = isset($def['option_fn']) ? ModuleRegistry::optionFor($def['key'], $m) : $row['_title'];
             $row['_subtitle'] = collect($def['subtitle'])->map(fn ($s) => $row[$s.'_label'] ?? $row[$s] ?? null)
                 ->filter(fn ($x) => $x !== null && $x !== '')->map(fn ($x) => is_bool($x) ? ($x ? 'Yes' : 'No') : (string) $x)->implode(' · ');
             $row['_locked'] = (bool) $lock;

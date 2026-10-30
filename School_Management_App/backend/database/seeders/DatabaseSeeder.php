@@ -127,9 +127,11 @@ class DatabaseSeeder extends Seeder
         foreach ($classDefs as $order => [$name, $group]) {
             $class = SchoolClass::create(['name' => $name, 'numeric_order' => $order + 1, 'group' => $group]);
             $num = (int) filter_var($name, FILTER_SANITIZE_NUMBER_INT);
-            $secNames = ($num >= 6 && $num <= 10) ? ['A', 'B'] : ['A'];
+            $secNames = ($num >= 6 && $num <= 12) ? ['A', 'B'] : ['A'];
             foreach ($secNames as $si => $sn) {
-                $sections[] = $class->sections()->create(['name' => $sn, 'capacity' => 40, 'room' => 'R-'.(100 + count($sections)),
+                // XI–XII: A = Science, B = Commerce (the only two streams; no Humanities / Arts).
+                $stream = $num >= 11 ? \App\Modules\Academics\Models\Section::STREAMS[$si] : null;
+                $sections[] = $class->sections()->create(['name' => $sn, 'stream' => $stream, 'capacity' => 40, 'room' => 'R-'.(100 + count($sections)),
                     'teacher_id' => $teacherList[(count($sections)) % count($teacherList)]->id]);
             }
             $subjects = match (true) {
@@ -137,12 +139,12 @@ class DatabaseSeeder extends Seeder
                 $num <= 5 => ['English', 'Hindi', 'Mathematics', 'EVS', 'Computer', 'GK'],
                 $num <= 8 => ['English', 'Hindi', 'Mathematics', 'Science', 'Social Science', 'Sanskrit', 'Computer'],
                 $num <= 10 => ['English', 'Hindi', 'Mathematics', 'Science', 'Social Science', 'Computer'],
-                default => ['English', 'Physics', 'Chemistry', 'Mathematics', 'Biology', 'Computer Science'],
+                default => ['English', 'Physics', 'Chemistry', 'Mathematics', 'Biology', 'Computer Science', 'Accountancy', 'Business Studies', 'Economics'],
             };
             foreach ($subjects as $k => $sub) {
                 $dept = match ($sub) {
                     'English', 'Rhymes & Stories' => 'English', 'Hindi' => 'Hindi', 'Mathematics' => 'Mathematics',
-                    'Science', 'EVS' => 'Science', 'Social Science', 'GK' => 'Social Science', 'Sanskrit' => 'Sanskrit',
+                    'Science', 'EVS' => 'Science', 'Social Science', 'GK', 'Accountancy', 'Business Studies', 'Economics' => 'Social Science', 'Sanskrit' => 'Sanskrit',
                     'Computer', 'Computer Science' => 'Computer', 'Physics' => 'Physics', 'Chemistry' => 'Chemistry',
                     'Biology' => 'Biology', default => 'Primary',
                 };

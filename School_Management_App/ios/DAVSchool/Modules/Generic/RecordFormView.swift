@@ -37,7 +37,8 @@ struct RecordFormView: View {
                                 FieldInput(field: f,
                                            value: binding(f.name),
                                            label: labelBinding(f.name),
-                                           disabled: isDisabled(f))
+                                           disabled: isDisabled(f),
+                                           parent: parentOf(f))
                                 if isEdit && f.immutable {
                                     Label("Can't be changed after saving", systemImage: "lock.fill").font(.caption2).foregroundStyle(.secondary)
                                 } else if let h = f.help {
@@ -95,7 +96,26 @@ struct RecordFormView: View {
     }
 
     private func binding(_ name: String) -> Binding<JSONValue?> {
-        Binding(get: { values[name] }, set: { values[name] = $0; fieldErrors[name] = nil })
+        Binding(get: { values[name] }, set: { newValue in
+            let changed = values[name] != newValue
+            values[name] = newValue; fieldErrors[name] = nil
+            // Changing the Class clears a Section / Subject / Student that belonged to the previous class.
+            if changed { for child in dependents(of: name) { values[child] = .null; labels[child] = nil } }
+        })
+    }
+
+    private var fieldNames: [String] { meta.formFields.map { $0.name } }
+
+    /// The picker this ref field waits on (Section ← Class), with the chosen parent value, if any.
+    private func parentOf(_ f: FieldMeta) -> RefParent? {
+        guard f.type == .ref, let ref = f.ref, let dep = ref.dependency(field: f.name, among: fieldNames) else { return nil }
+        let title = meta.formFields.first { $0.name == dep.field }?.label ?? "Class"
+        let v = values[dep.field].flatMap { $0.isNull ? nil : ($0.intValue.map { String($0) } ?? $0.stringValue) }
+        return RefParent(title: title, key: dep.key, value: v)
+    }
+
+    private func dependents(of name: String) -> [String] {
+        meta.formFields.filter { f in f.type == .ref && f.ref?.dependency(field: f.name, among: fieldNames)?.field == name }.map { $0.name }
     }
 
     private func labelBinding(_ name: String) -> Binding<String?> {
@@ -165,12 +185,20 @@ struct RecordFormView: View {
     }
 }
 
+/// The picker a ref field depends on: e.g. Section waits for Class and then lists only that class's sections.
+struct RefParent {
+    let title: String
+    let key: String
+    let value: String?
+}
+
 /// One input for one field type.
 struct FieldInput: View {
     let field: FieldMeta
     @Binding var value: JSONValue?
     @Binding var label: String?
     var disabled = false
+    var parent: RefParent? = nil
 
     @EnvironmentObject private var session: SessionStore
     @State private var pickingRef = false
@@ -214,6 +242,9 @@ struct FieldInput: View {
             case .bool:
                 Toggle(title, isOn: Binding(get: { value?.boolValue ?? false }, set: { value = .bool($0) }))
             case .ref:
+                if let p = parent, p.value == nil {
+                    LabeledContent(title) { Text("Choose \(p.title) first").foregroundStyle(.tertiary) }
+                } else {
                 Button { pickingRef = true } label: {
                     HStack {
                         Text(title).foregroundStyle(.primary)
@@ -224,11 +255,12 @@ struct FieldInput: View {
                 }
                 .sheet(isPresented: $pickingRef) {
                     if let ref = field.ref {
-                        RefPickerView(ref: ref, title: field.label) { id, l in
+                        RefPickerView(ref: ref, title: field.label, filters: parent.flatMap { p in p.value.map { [p.key: $0] } } ?? [:]) { id, l in
                             value = id.map { JSONValue.number(Double($0)) } ?? JSONValue.null
                             label = l
                         }
                     }
+                }
                 }
             case .image:
                 imageInput
@@ -377,6 +409,8 @@ extension UIImage {
 struct RefPickerView: View {
     let ref: FieldRef
     let title: String
+    /// e.g. ["class_id": "8"] — only Class 6's sections once Class 6 is chosen.
+    var filters: [String: String] = [:]
     let onPick: (Int?, String?) -> Void
 
     @EnvironmentObject private var session: SessionStore
@@ -416,14 +450,17 @@ struct RefPickerView: View {
     }
 
     private func label(_ r: Record) -> String {
-        if let lf = ref.labelField, let v = r.string(lf), !v.isEmpty { return v }
+        // "_option" (server v2.0.1+) tells look-alikes apart: "Class 6 – A", "Mathematics (Class 6)".
+        if let v = r.string("_option"), !v.isEmpty { return v }
+        if ref.module == "sections", let c = r.string("class_id_label"), let n = r.string("name"), !c.isEmpty { return "\(c) – \(n)" }
+        if let lf = ref.labelField, lf != "_option", let v = r.string(lf), !v.isEmpty { return v }
         return r.title(using: session.module(ref.module))
     }
 
     private func load() async {
         loading = true; defer { loading = false }
         do {
-            rows = try await session.api.records(ref.module, q: query.isEmpty ? nil : query, perPage: 50, sort: nil).data
+            rows = try await session.api.records(ref.module, q: query.isEmpty ? nil : query, perPage: filters.isEmpty ? 50 : 200, sort: nil, filters: filters).data
             error = nil
         } catch is CancellationError {
         } catch {

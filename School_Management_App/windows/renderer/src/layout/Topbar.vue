@@ -68,7 +68,7 @@ async function openNote(n) {
   if (n.module) router.push({ path: routeFor(n.module), query: n.record_id ? { id: n.record_id } : {} });
 }
 async function readAll() { await post('notifications/read-all').catch(() => {}); notes.value.forEach(n => (n.read_at = n.read_at || new Date().toISOString())); app.unread = 0; }
-function about() { if (isDesktop) desktop.about(); else alert('DAV School Management 2.0.0\nPrincipal: Prasanjeet Kumar Paul'); }
+function about() { if (isDesktop) desktop.about(); else alert('DAV School Management 2.0.1\nPrincipal: Prasanjeet Kumar Paul'); }
 async function logout() {
   if (!(await confirmBox({ title: 'Sign out?', message: 'You will need your password to sign in again.', ok: 'Sign out' }))) return;
   post('auth/logout').catch(() => {});

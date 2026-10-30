@@ -24,7 +24,7 @@
         <div class="toolbar">
           <div class="search"><Icon name="search" :size="18" /><input v-model="q" :placeholder="'Search ' + meta.title.toLowerCase() + '…'" /></div>
           <template v-for="f in filters" :key="f.name">
-            <RefPicker v-if="f.type === 'ref'" v-model="filter[f.name]" :ref-info="f.ref" :placeholder="fieldLabel(f)" class="fl" sm />
+            <RefPicker v-if="f.type === 'ref'" v-model="filter[f.name]" :ref-info="f.ref" :placeholder="fieldLabel(f)" :params="filterParams(f)" class="fl" sm />
             <select v-else-if="f.type === 'select' || f.type === 'bool'" v-model="filter[f.name]" class="input sm fl">
               <option :value="undefined">{{ fieldLabel(f) }}: all</option>
               <template v-if="f.type === 'bool'"><option value="1">Yes</option><option value="0">No</option></template>
@@ -85,7 +85,7 @@ import FieldValue from './FieldValue.vue';
 import RefPicker from './RefPicker.vue';
 import RecordForm from './RecordForm.vue';
 import RecordDrawer from './RecordDrawer.vue';
-import { listFields, filterFields, fieldLabel, can, rowTitle } from './meta';
+import { listFields, filterFields, fieldLabel, can, rowTitle, dependencyOf } from './meta';
 import { app } from '../../state';
 import { get, del } from '../../api/client';
 import { confirmBox, toast, toastError } from '../../ui/ui';
@@ -129,6 +129,16 @@ watch(() => route.query.id, (id) => { if (id) { openId.value = id; openRow.value
 onMounted(() => { load(); if (route.query.id) { openId.value = route.query.id; drawerOpen.value = true; } });
 
 function sortBy(f) { if (sortField.value === f) sortDesc.value = !sortDesc.value; else { sortField.value = f; sortDesc.value = false; } load(); }
+// A Section filter lists only the chosen Class's sections (each still labelled "Class 6 – A").
+function filterParams(f) {
+  const d = dependencyOf(f, meta.value?.fields || []);
+  const v = d ? filter[d.field] : null;
+  return d && v ? { ['filter[' + d.key + ']']: v, per_page: 200 } : undefined;
+}
+watch(() => (meta.value?.fields || []).map(f => { const d = dependencyOf(f, meta.value.fields); return d ? filter[d.field] : undefined; }), (now, before) => {
+  if (!before || now.length !== before.length) return;
+  (meta.value?.fields || []).forEach((f, i) => { if (now[i] !== before[i] && before[i] !== undefined && filter[f.name]) filter[f.name] = undefined; });
+});
 function clearFilters() { Object.keys(filter).forEach(k => (filter[k] = undefined)); }
 function displayFirst(f, r) { const v = f.type === 'ref' ? r[f.name + '_label'] : r[f.name]; return v ?? rowTitle(meta.value, r); }
 function openRecord(r) { openId.value = r.id; openRow.value = r; drawerOpen.value = true; }

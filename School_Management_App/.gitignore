@@ -14,3 +14,7 @@
 **/storage/logs/*.log
 .DS_Store
 backend/bin/
+
+# Windows app icons are source files (electron-builder buildResources), not build output
+!windows/build/
+!windows/build/**

@@ -31,7 +31,9 @@ const emit = defineEmits(['update:modelValue', 'picked']);
 const open = ref(false), q = ref(''), rows = ref([]), loading = ref(false), error = ref(''), hi = ref(0), inp = ref(null), picked = ref(null);
 const vClickAway = { mounted(el, b) { el._ca = (e) => { if (!el.contains(e.target)) b.value(); }; document.addEventListener('mousedown', el._ca); }, unmounted(el) { document.removeEventListener('mousedown', el._ca); } };
 const labelField = computed(() => props.refInfo?.label_field || app.modules[props.refInfo?.module]?.label_field || 'name');
-const toItem = (r) => ({ ...r, _label: r._title || r[labelField.value] || r.name || r.title || ('#' + r.id), _sub: r._subtitle || '' });
+// "_option" (server v2.0.1+) is the picker text that tells look-alikes apart: "Class 6 – A", "Mathematics (Class 6)".
+const sectionText = (r) => [r.class_id_label, r.name].filter(Boolean).join(' – ') + (r.stream ? ` (${r.stream})` : '');
+const toItem = (r) => ({ ...r, _label: r._option || (props.refInfo?.module === 'sections' && r.class_id_label ? sectionText(r) : '') || r._title || (labelField.value !== '_option' && r[labelField.value]) || r.name || r.title || ('#' + r.id), _sub: r._subtitle || '' });
 const items = computed(() => rows.value.map(toItem));
 const currentLabel = computed(() => picked.value?._label || props.label || items.value.find(i => String(i.id) === String(props.modelValue))?._label || ('#' + props.modelValue));
 let t, seq = 0;

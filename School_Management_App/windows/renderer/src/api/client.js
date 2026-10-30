@@ -3,7 +3,7 @@ import { reactive } from 'vue';
 
 const desktop = window.desktop || null;
 export const DEMO_SERVER = 'https://dav-dugda-sms.sites.tab.bot/api/v1/';
-export const session = reactive({ server: '', token: null, user: null, ready: false, version: '2.0.0', firstRunDone: false });
+export const session = reactive({ server: '', token: null, user: null, ready: false, version: '2.0.1', firstRunDone: false });
 
 const listeners = { unauthorized: [] };
 export function onUnauthorized(fn) { listeners.unauthorized.push(fn); }

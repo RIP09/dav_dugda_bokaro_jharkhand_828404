@@ -15,7 +15,7 @@ class AcademicController extends Controller
     // ---- Classes -------------------------------------------------------------------------------
     public function classes()
     {
-        return $this->ok(SchoolClass::with(['sections.teacher', 'subjects.teacher'])->withCount('students')
+        return $this->ok(SchoolClass::with(['sections.teacher', 'sections.schoolClass', 'subjects.teacher'])->withCount('students')
             ->orderBy('numeric_order')->get());
     }
 
@@ -67,6 +67,7 @@ class AcademicController extends Controller
         $data = $request->validate([
             'class_id' => 'required|exists:school_classes,id',
             'name' => 'required|string|max:20',
+            'stream' => 'nullable|in:'.implode(',', Section::STREAMS),
             'capacity' => 'nullable|integer|min:1',
             'teacher_id' => 'nullable|exists:users,id',
             'room' => 'nullable|string|max:30',
@@ -74,18 +75,22 @@ class AcademicController extends Controller
         if (Section::where('class_id', $data['class_id'])->where('name', $data['name'])->exists()) {
             return $this->fail('That section already exists in this class.');
         }
-        return $this->created(Section::create($data)->load('teacher'), 'Section created');
+        if (! empty($data['stream']) && ! SchoolClass::isSeniorSecondary(SchoolClass::find($data['class_id']))) {
+            return $this->fail('Stream (Science / Commerce) is only for Class XI and XII.');
+        }
+        return $this->created(Section::create($data)->load('teacher', 'schoolClass'), 'Section created');
     }
 
     public function updateSection(Request $request, Section $section)
     {
         $section->update($request->validate([
             'name' => 'sometimes|string|max:20',
+            'stream' => 'sometimes|nullable|in:'.implode(',', Section::STREAMS),
             'capacity' => 'sometimes|integer|min:1',
             'teacher_id' => 'sometimes|nullable|exists:users,id',
             'room' => 'sometimes|nullable|string|max:30',
         ]));
-        return $this->ok($section->load('teacher'), 'Section updated');
+        return $this->ok($section->load('teacher', 'schoolClass'), 'Section updated');
     }
 
     public function destroySection(Section $section)

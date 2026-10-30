@@ -78,7 +78,7 @@ fun ExamsScreen() {
             LoadContent(vm.exams.value, vm::refresh) { list ->
                 ScreenList {
                     if (staffSide) item {
-                        Dropdown("Class for date sheet", vm.classes.value.map { it.id to it.name }, vm.classId, { vm.classId = it; vm.selected?.let { e -> vm.open(e, child) } })
+                        Dropdown("Class for date sheet", vm.classes.value.map { it.id to classDisplayName(it.name) }, vm.classId, { vm.classId = it; vm.selected?.let { e -> vm.open(e, child) } })
                     }
                     if (list.isEmpty()) item { EmptyState("No exams yet") }
                     items(list, key = { it.id }) { e ->

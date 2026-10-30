@@ -173,10 +173,12 @@ private fun AdmitStudentDialog(classes: List<SchoolClass>, routes: List<Transpor
 fun ClassSectionPicker(classes: List<SchoolClass>, classId: Int?, sectionId: Int?, allowAll: Boolean = false, onChange: (Int?, Int?) -> Unit) {
     val cls = classes.firstOrNull { it.id == classId }
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        val classOpts: List<Pair<Int?, String>> = (if (allowAll) listOf<Pair<Int?, String>>(null to "All classes") else emptyList()) + classes.map { it.id to it.name }
+        val classOpts: List<Pair<Int?, String>> = (if (allowAll) listOf<Pair<Int?, String>>(null to "All classes") else emptyList()) + classes.map { it.id to classDisplayName(it.name) }
         Dropdown("Class", classOpts, classId, { c -> onChange(c, classes.firstOrNull { it.id == c }?.sections?.singleOrNull()?.id) }, Modifier.weight(1f))
-        val secOpts: List<Pair<Int?, String>> = (if (allowAll) listOf<Pair<Int?, String>>(null to "All") else emptyList()) + (cls?.sections ?: emptyList()).map { it.id to it.name }
-        Dropdown("Section", secOpts, sectionId, { s -> onChange(classId, s) }, Modifier.weight(0.7f))
+        // Sections always say their class ("Class 6 – A"); until a class is picked there is nothing to choose.
+        val secOpts: List<Pair<Int?, String>> = (if (allowAll) listOf<Pair<Int?, String>>(null to (cls?.let { "All of ${classDisplayName(it.name)}" } ?: "All sections")) else emptyList()) +
+            (cls?.sections ?: emptyList()).map { it.id to it.labelIn(cls) }
+        Dropdown(if (cls == null && !allowAll) "Section (choose class first)" else "Section", secOpts, sectionId, { s -> onChange(classId, s) }, Modifier.weight(1f))
     }
 }
 

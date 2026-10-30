@@ -25,5 +25,5 @@ class Homework extends Model
     public function submissions() { return $this->hasMany(HomeworkSubmission::class); }
     public function getSubjectNameAttribute() { return $this->subject?->name; }
     public function getTeacherNameAttribute() { return $this->teacher?->name; }
-    public function getClassLabelAttribute() { return trim(($this->schoolClass?->name ?? '').($this->section ? ' - '.$this->section->name : '')); }
+    public function getClassLabelAttribute() { return \App\Modules\Academics\Models\Section::labelFor($this->schoolClass?->name, $this->section?->name ?? '', $this->section?->stream).($this->section ? '' : ' (all sections)'); }
 }

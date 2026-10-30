@@ -17,8 +17,8 @@ android {
         applicationId = "com.davdugda.sms"
         minSdk = 26
         targetSdk = 34
-        versionCode = 3
-        versionName = "2.0.0"
+        versionCode = 4
+        versionName = "2.0.1"
         buildConfigField("String", "DEFAULT_BASE_URL", "\"$apiBaseUrl\"")
         vectorDrawables { useSupportLibrary = true }
     }
@@ -82,6 +82,7 @@ android {
                 // UI smoke tests drive each app against a running backend (see README "Testing")
                 it.systemProperty("roborazzi.test.record", "true")
                 it.systemProperty("sms.api", (project.findProperty("testApi") as String?) ?: "http://127.0.0.1:8000/api/v1/")
+                it.systemProperty("sms.expectLabels", (project.findProperty("expectLabels") as String?) ?: "true")
                 it.maxHeapSize = "2g"
             }
         }

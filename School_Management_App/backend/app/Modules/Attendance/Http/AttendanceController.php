@@ -93,7 +93,7 @@ class AttendanceController extends Controller
             ->groupBy('section_id', 'status')->get()->groupBy('section_id');
         return $this->ok($sections->map(function ($s) use ($marks) {
             $m = ($marks[$s->id] ?? collect())->pluck('c', 'status');
-            return ['section_id' => $s->id, 'class_label' => $s->schoolClass->name.' - '.$s->name,
+            return ['section_id' => $s->id, 'class_label' => $s->label,
                 'strength' => $s->students_count, 'present' => (int) (($m['present'] ?? 0) + ($m['late'] ?? 0)),
                 'absent' => (int) ($m['absent'] ?? 0), 'marked' => $m->isNotEmpty()];
         })->values());

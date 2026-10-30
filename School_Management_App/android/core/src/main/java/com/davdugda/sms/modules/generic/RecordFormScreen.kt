@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
@@ -39,7 +40,7 @@ class RecordFormViewModel(c: AppContainer, val key: String, val id: String?) : B
     val values = mutableStateMapOf<String, String>()
     val labels = mutableStateMapOf<String, String>()   // file names shown for uploads
     val errors = mutableStateMapOf<String, String>()
-    val refOptions = mutableStateMapOf<String, List<Pair<String, String>>>()
+    val refOptions = mutableStateMapOf<String, List<RefOption>>()
     var saved by mutableStateOf<String?>(null)
     var uploading by mutableStateOf<String?>(null)
 
@@ -53,7 +54,28 @@ class RecordFormViewModel(c: AppContainer, val key: String, val id: String?) : B
             if (f.type == "file" || f.type == "image") labels[f.name] = row?.str(f.name)?.substringAfterLast('/') ?: ""
         }
         editableFields(m).filter { it.type == "ref" && it.ref != null }.forEach { f ->
-            runCatching { refOptions[f.name] = c.meta.refOptions(f.ref!!) }
+            runCatching { refOptions[f.name] = c.meta.refChoices(f.ref!!) }
+        }
+    }
+
+    /** Choices for a ref field, narrowed to the chosen parent (e.g. only Class 6's sections once Class 6 is picked). */
+    fun choicesFor(f: FieldMeta): List<RefOption>? {
+        val m = meta ?: return null
+        val all = refOptions[f.name] ?: return null
+        val dep = f.dependency(editableFields(m))
+        return all.forParent(dep, dep?.let { values[it.field] })
+    }
+
+    /** Set a value; pickers that depend on it are cleared if their choice no longer fits, or filled when only one fits. */
+    fun change(name: String, value: String) {
+        values[name] = value; errors.remove(name)
+        val m = meta ?: return
+        val fields = editableFields(m)
+        fields.filter { it.type == "ref" && it.dependency(fields)?.field == name }.forEach { child ->
+            val opts = choicesFor(child) ?: return@forEach
+            val cur = values[child.name].orEmpty()
+            if (cur.isNotBlank() && opts.none { it.id == cur }) change(child.name, "")
+            if (values[child.name].isNullOrBlank() && opts.size == 1 && child.required) change(child.name, opts[0].id)
         }
     }
 
@@ -118,7 +140,7 @@ fun RecordFormScreen(key: String, id: String?, onDone: (savedId: String) -> Unit
                 val locked = id != null && f.immutable
                 val label = f.title + if (f.required) " *" else ""
                 val value = vm.values[f.name].orEmpty()
-                val set: (String) -> Unit = { vm.values[f.name] = it; vm.errors.remove(f.name) }
+                val set: (String) -> Unit = { vm.change(f.name, it) }
                 Column {
                     when {
                         locked -> OutlinedTextField(value = displayValue(f, vm.original ?: JsonObject(emptyMap())), onValueChange = {}, readOnly = true, enabled = false,
@@ -126,9 +148,15 @@ fun RecordFormScreen(key: String, id: String?, onDone: (savedId: String) -> Unit
                             supportingText = { Text("Permanent — can't be changed after saving") })
                         f.type == "select" -> Dropdown(label, (if (f.required) emptyList() else listOf("" to "—")) + f.options.orEmpty().map { it.key to it.label }, value, set, Modifier.fillMaxWidth())
                         f.type == "ref" -> {
-                            val opts = vm.refOptions[f.name]
-                            if (opts == null) FormField(label + " (id)", value, set, number = true)
-                            else Dropdown(label, (if (f.required) emptyList() else listOf("" to "—")) + opts, value, set, Modifier.fillMaxWidth())
+                            val opts = vm.choicesFor(f)
+                            val dep = f.dependency(editableFields(meta))
+                            val parent = dep?.let { d -> editableFields(meta).firstOrNull { it.name == d.field } }
+                            when {
+                                opts == null -> FormField(label + " (id)", value, set, number = true)
+                                dep != null && vm.values[dep.field].isNullOrBlank() -> OutlinedTextField(value = "", onValueChange = {}, readOnly = true, enabled = false,
+                                    label = { Text("$label — choose ${parent?.title ?: "the class"} first") }, modifier = Modifier.fillMaxWidth().testTag("ref_${f.name}_waiting"))
+                                else -> Dropdown(label, (if (f.required) emptyList() else listOf("" to "—")) + opts.map { it.id to it.label }, value, set, Modifier.fillMaxWidth())
+                            }
                         }
                         f.type == "bool" -> Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                             Text(f.title, Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)

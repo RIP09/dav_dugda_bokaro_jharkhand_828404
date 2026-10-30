@@ -48,7 +48,7 @@ class ClassesViewModel(c: AppContainer) : BaseViewModel(c) {
     init { refresh(); act { teachers.value = api.users("teacher").data; null } }
     fun refresh() = load(list, silent = true) { api.classes().data }
     fun addClass(name: String, sections: List<String>, done: () -> Unit) = act(onDone = { done(); refresh() }) { api.createClass(ClassCreate(name, sections)).message }
-    fun addSection(classId: Int, name: String, teacherId: Int?, done: () -> Unit) = act(onDone = { done(); refresh() }) { api.createSection(SectionCreate(classId, name, teacherId)).message }
+    fun addSection(classId: Int, name: String, teacherId: Int?, stream: String? = null, done: () -> Unit) = act(onDone = { done(); refresh() }) { api.createSection(SectionCreate(classId, name, teacherId, stream)).message }
     fun addSubject(classId: Int, name: String, code: String?, teacherId: Int?, done: () -> Unit) = act(onDone = { done(); refresh() }) { api.createSubject(SubjectCreate(classId, name, code, teacherId)).message }
     fun deleteSubject(id: Int) = act(onDone = ::refresh) { api.deleteSubject(id).message }
     fun deleteClass(id: Int) = act(onDone = ::refresh) { api.deleteClass(id).message }
@@ -85,7 +85,7 @@ fun ClassesScreen() {
                                     Spacer(Modifier.height(10.dp))
                                     Text("Sections", style = MaterialTheme.typography.labelLarge)
                                     cl.sections.forEach { s ->
-                                        Text("• ${s.name} — class teacher: ${s.teacher?.name ?: "not set"}${s.room?.let { " · $it" } ?: ""}", style = MaterialTheme.typography.bodyMedium)
+                                        Text("• ${s.labelIn(cl)} — class teacher: ${s.teacher?.name ?: "not set"}${s.room?.let { " · $it" } ?: ""}", style = MaterialTheme.typography.bodyMedium)
                                     }
                                     TextButton(onClick = { addSectionFor = cl }) { Icon(Icons.Outlined.Add, null); Text("Add section") }
                                     Text("Subjects", style = MaterialTheme.typography.labelLarge)
@@ -121,8 +121,13 @@ fun ClassesScreen() {
     addSectionFor?.let { cl ->
         var name by remember { mutableStateOf("") }
         var teacher by remember { mutableStateOf<Int?>(null) }
-        FormDialog("Add section to ${cl.name}", busy = vm.busy, onDismiss = { addSectionFor = null }, onConfirm = { vm.addSection(cl.id, name.trim(), teacher) { addSectionFor = null } }) {
-            FormField("Section name", name, { name = it })
+        var stream by remember { mutableStateOf<String?>(null) }
+        // Streams exist only in Class XI–XII, and DAV Dugda offers Science and Commerce only (no Humanities / Arts).
+        val senior = cl.group == "Senior Secondary" || Regex("(^|\\D)(11|12)(\\D|$)|\\bXII?\\b", RegexOption.IGNORE_CASE).containsMatchIn(cl.name)
+        FormDialog("Add section to ${classDisplayName(cl.name)}", busy = vm.busy, onDismiss = { addSectionFor = null }, onConfirm = { vm.addSection(cl.id, name.trim(), teacher, if (senior) stream else null) { addSectionFor = null } }) {
+            FormField("Section letter (e.g. A)", name, { name = it })
+            if (name.isNotBlank()) Text("Will show as “${sectionLabel(cl.name, name.trim(), if (senior) stream else null)}”", style = MaterialTheme.typography.bodySmall)
+            if (senior) Dropdown("Stream", listOf<Pair<String?, String>>(null to "—", "Science" to "Science", "Commerce" to "Commerce"), stream, { stream = it })
             Dropdown("Class teacher", teacherOpts, teacher, { teacher = it })
         }
     }

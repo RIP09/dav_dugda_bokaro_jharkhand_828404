@@ -53,7 +53,7 @@ class ApiV2ContractTest {
                         val menu = dec(ApiList.serializer(MenuGroup.serializer()), f).data
                         val mods = modulesByRole[r].orEmpty()
                         menu.flatMap { it.items }.forEach { m ->
-                            if (m.screen !in CustomScreens && !mods.containsKey(m.screen)) problems += "${f.name}: menu item '${m.screen}' is neither a known screen nor one of this role's modules"
+                            if (m.screen !in CustomScreens && !mods.containsKey(m.screen) && !(m.type == "module" && mods.containsKey(m.moduleKey))) problems += "${f.name}: menu item '${m.screen}' is neither a known screen nor one of this role's modules"
                         }
                     }
                     e.startsWith("records_") -> {
@@ -64,6 +64,8 @@ class ApiV2ContractTest {
                             rowsChecked++
                             if (row["_locked"] == null) problems += "${f.name}: row without _locked"
                             if (rowTitle(meta, row).isBlank()) problems += "${f.name}: row without a title"
+                            if (row["_option"] == null) problems += "${f.name}: row without a picker label (_option)"
+                            if (key == "sections" && !Regex("^(LKG|UKG|Class \\d+) – [A-Z]").containsMatchIn(row.str("_option").orEmpty())) problems += "${f.name}: section picker label without its class: ${row.str("_option")}"
                             meta?.fields?.forEach { fm -> displayValue(fm, row) }
                             meta?.let { m -> editableFields(m).forEach { fm -> toJsonValue(fm, formText(fm, row)) } }
                             if (key == "payments" && !row.isLocked) problems += "${f.name}: an issued receipt is not locked"

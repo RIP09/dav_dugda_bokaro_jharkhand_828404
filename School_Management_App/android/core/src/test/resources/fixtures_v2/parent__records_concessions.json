@@ -1,1 +1,1 @@
-{"data":[],"meta":{"total":0,"page":1,"per_page":5,"last_page":1}}
+{"data":[{"id":3,"student_id":25,"student_id_label":"Ananya Mahato","fee_type_id":null,"fee_type_id_label":null,"type":"percent","value":50,"reason":"Merit","valid_till":null,"_title":"Ananya Mahato \u00b7 50%","_option":"Ananya Mahato \u00b7 50%","_subtitle":"Merit","_locked":false,"_lock_reason":null,"_can_edit":false,"_can_delete":false,"_actions":[],"created_at":"2026-10-30 08:49","updated_at":"2026-10-30 08:49"}],"meta":{"total":1,"page":1,"per_page":5,"last_page":1}}

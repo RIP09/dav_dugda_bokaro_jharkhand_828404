@@ -19,7 +19,38 @@ data class ModulePermissions(
 @Serializable data class FieldOption(val value: JsonElement = JsonNull, val label: String = "") {
     val key: String get() = value.asText()
 }
-@Serializable data class FieldRef(val module: String, val labelField: String? = null)
+/** depends_on: this picker's options are filtered by another form field (Section ← Class, Student ← Section). */
+@Serializable data class RefDependency(val field: String, val key: String)
+@Serializable data class FieldRef(val module: String, val labelField: String? = null, val dependsOn: RefDependency? = null)
+
+/** One choice in a reference picker. [parents] holds the row's class_id / section_id so dependent pickers can filter. */
+data class RefOption(val id: String, val label: String, val parents: Map<String, String> = emptyMap())
+
+/**
+ * The picker this field waits on: what the server says (ref.depends_on), or — for older servers — the same rule worked out
+ * here: a Section/Subject waits on the Class picker, a Student on the Section (or Class) picker of the same form.
+ */
+fun FieldMeta.dependency(all: List<FieldMeta>): RefDependency? {
+    val r = ref ?: return null
+    r.dependsOn?.let { return it }
+    val names = all.map { it.name }.toSet()
+    return when (r.module) {
+        "sections", "subjects" -> name.replace(Regex("(section|subject)_id$"), "class_id").takeIf { it != name && it in names }?.let { RefDependency(it, "class_id") }
+        "students" -> {
+            val p = name.removeSuffix("student_id")
+            when {
+                "${p}section_id" in names -> RefDependency("${p}section_id", "section_id")
+                "${p}class_id" in names -> RefDependency("${p}class_id", "class_id")
+                else -> null
+            }
+        }
+        else -> null
+    }
+}
+
+/** Options of a dependent picker for the chosen parent value (all options when there is no dependency). */
+fun List<RefOption>.forParent(dep: RefDependency?, parentValue: String?): List<RefOption> =
+    if (dep == null) this else if (parentValue.isNullOrBlank()) emptyList() else filter { it.parents[dep.key] == parentValue }
 
 @Serializable
 data class FieldMeta(
@@ -68,7 +99,10 @@ data class ModuleMeta(
     val actions: List<ModuleAction> = emptyList(),
 )
 
-@Serializable data class MenuItem(val key: String, val title: String = key, val icon: String? = null, val screen: String = key, val type: String? = null)
+@Serializable data class MenuItem(val key: String, val title: String = key, val icon: String? = null, val screen: String = key, val type: String? = null, val module: String? = null) {
+    /** The server module a "module" entry opens. Records screens whose key is also a custom screen come as "module:<key>". */
+    val moduleKey: String get() = module ?: screen.removePrefix("module:")
+}
 @Serializable data class MenuGroup(val group: String = "", val items: List<MenuItem> = emptyList())
 
 @Serializable data class PageMeta(val total: Int = 0, val page: Int = 1, val perPage: Int = 25, val lastPage: Int = 1, val unread: Int = 0)

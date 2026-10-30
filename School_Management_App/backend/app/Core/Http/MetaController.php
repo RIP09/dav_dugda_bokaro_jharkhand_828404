@@ -37,7 +37,9 @@ class MetaController extends Controller
             $o = array_intersect_key($f, array_flip(['name', 'label', 'type', 'required', 'list', 'filter', 'readonly', 'immutable', 'options', 'ref', 'help', 'default']));
             if (! empty($f['virtual']) && empty($f['write_only'])) $o['readonly'] = $o['readonly'] || ! isset($f['get']) ? $o['readonly'] : $o['readonly'];
             if (! empty($f['write_only'])) $o['write_only'] = true;
-            if ($f['type'] === 'ref' && ($r = ModuleRegistry::get($f['ref']['module']))) $o['ref']['label_field'] = $r['label'] ?? 'name';
+            // '_option' is on every records row: the picker text that tells look-alikes apart ("Class 6 – A", not just "A").
+            // Apps already read ref.label_field first, so even installed v2.0.0 apps show the full label.
+            if ($f['type'] === 'ref' && ModuleRegistry::get($f['ref']['module'])) $o['ref']['label_field'] = '_option';
             return $o;
         }, $def['fields']);
         $actions = [];

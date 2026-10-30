@@ -34,6 +34,7 @@ class ModuleRegistry
                         'import_key' => null, 'order' => 100];
                     foreach ($def['fields'] as &$f) $f = array_merge(F::make($f['name'], $f['label']), $f);
                     unset($f);
+                    $def['fields'] = self::withDependencies($def['fields']);
                     self::$defs[$def['key']] = $def;
                 }
             }
@@ -43,6 +44,46 @@ class ModuleRegistry
     }
 
     public static function get(string $key): ?array { return self::all()[$key] ?? null; }
+
+    /**
+     * Pickers that only make sense after another choice: a Section (or Subject) belongs to a Class, a Student to a
+     * Section/Class. ref.depends_on = ['field' => <the form field holding the parent>, 'key' => <the column on the
+     * option rows to match>]. Apps filter the options by it, and the server rejects a mismatched pair.
+     * Declared explicitly with F::ref(..., ['depends_on' => 'from_class_id']) or worked out from sibling fields.
+     */
+    public static function withDependencies(array $fields): array
+    {
+        $names = array_column($fields, 'name');
+        foreach ($fields as &$f) {
+            if ($f['type'] !== 'ref' || empty($f['ref']['module']) || isset($f['ref']['depends_on'])) continue;
+            $mod = $f['ref']['module'];
+            $explicit = $f['depends_on'] ?? null;
+            $parent = null; $key = null;
+            if (in_array($mod, ['sections', 'subjects'], true)) {
+                $key = 'class_id';
+                $guess = preg_replace('/(section|subject)_id$/', 'class_id', $f['name']);
+                $parent = $explicit ?? (in_array($guess, $names, true) && $guess !== $f['name'] ? $guess : null);
+            } elseif ($mod === 'students') {
+                $prefix = preg_replace('/student_id$/', '', $f['name']);
+                if ($explicit) { $parent = $explicit; $key = str_ends_with($explicit, 'section_id') ? 'section_id' : 'class_id'; }
+                elseif (in_array($prefix.'section_id', $names, true)) { $parent = $prefix.'section_id'; $key = 'section_id'; }
+                elseif (in_array($prefix.'class_id', $names, true)) { $parent = $prefix.'class_id'; $key = 'class_id'; }
+            }
+            if ($parent && $key) $f['ref']['depends_on'] = ['field' => $parent, 'key' => $key];
+        }
+        unset($f);
+        return $fields;
+    }
+
+    /** The text shown for a record inside a picker: says enough to tell look-alikes apart ("Class 6 – A", "Mathematics (Class 6)"). */
+    public static function optionFor(?string $key, Model $m): string
+    {
+        $def = $key ? self::get($key) : null;
+        if ($def && isset($def['option_fn'])) {
+            try { $v = (string) ($def['option_fn'])($m); if ($v !== '') return $v; } catch (\Throwable) {}
+        }
+        return self::titleFor($key, $m);
+    }
 
     public static function expandRoles(array|string $roles): array
     {

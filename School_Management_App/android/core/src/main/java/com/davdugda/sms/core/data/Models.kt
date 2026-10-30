@@ -70,7 +70,29 @@ data class Section(
     val teacher: UserLite? = null,
     val schoolClass: SchoolClass? = null,
     val studentsCount: Int? = null,
-) { val label: String get() = (schoolClass?.name?.let { "$it - " } ?: "") + name }
+    /** XI–XII only: "Science" or "Commerce" (no Humanities / Arts). */
+    val stream: String? = null,
+    /** Server-made label, e.g. "Class 6 – A" (servers from v2.0.1). */
+    @kotlinx.serialization.SerialName("label") val serverLabel: String? = null,
+    val className: String? = null,
+) {
+    /** Always says which class the section belongs to: "Class 6 – A", "Class 11 – A (Science)". */
+    val label: String get() = serverLabel?.takeIf { it.isNotBlank() } ?: sectionLabel(className ?: schoolClass?.name, name, stream)
+    fun labelIn(cls: SchoolClass?): String = serverLabel?.takeIf { it.isNotBlank() } ?: sectionLabel(className ?: schoolClass?.name ?: cls?.name, name, stream)
+}
+
+/** "6"/"VI" → "Class 6"/"Class VI"; "Class 6", "LKG", "Nursery" unchanged (same rule as the server). */
+fun classDisplayName(name: String?): String {
+    val n = name?.trim().orEmpty()
+    return if (Regex("^(\\d{1,2}|[IVX]{1,4}|[ivx]{1,4})(st|nd|rd|th)?$").matches(n)) "Class $n" else n
+}
+
+/** "Class 6 – A", plus " (Science)" / " (Commerce)" for XI–XII sections. */
+fun sectionLabel(className: String?, section: String?, stream: String? = null): String {
+    val c = classDisplayName(className); val s = section?.trim().orEmpty()
+    val base = when { c.isNotEmpty() && s.isNotEmpty() -> "$c – $s"; c.isNotEmpty() -> c; s.isNotEmpty() -> "Section $s"; else -> "" }
+    return if (!stream.isNullOrBlank()) "$base ($stream)" else base
+}
 
 @Serializable
 data class Subject(
@@ -254,7 +276,7 @@ data class StudentCreate(
 )
 @Serializable data class UserCreate(val name: String, val email: String?, val phone: String?, val role: String, val password: String?, val designation: String?, val department: String?, val gender: String? = null)
 @Serializable data class ClassCreate(val name: String, val sections: List<String>, val group: String? = null)
-@Serializable data class SectionCreate(val classId: Int, val name: String, val teacherId: Int? = null)
+@Serializable data class SectionCreate(val classId: Int, val name: String, val teacherId: Int? = null, val stream: String? = null)
 @Serializable data class SubjectCreate(val classId: Int, val name: String, val code: String?, val teacherId: Int?)
 @Serializable data class ChangePassword(val currentPassword: String, val newPassword: String)
 @Serializable data class Promoted(val promoted: Int = 0)

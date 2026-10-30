@@ -95,11 +95,32 @@ public struct FieldOption: Decodable, Hashable, Identifiable {
 public struct FieldRef: Decodable, Hashable {
     public let module: String
     public let labelField: String?
+    /// depends_on (server v2.0.1+): this picker is filtered by another form field, e.g. Section ← Class.
+    public let dependsOnField: String?
+    public let dependsOnKey: String?
 
     public init(from decoder: Decoder) throws {
         let r = try Row(decoder)
         module = r.str("module") ?? ""
         labelField = r.str("label_field")
+        let dep = r.json("depends_on")
+        dependsOnField = dep?["field"]?.stringValue
+        dependsOnKey = dep?["key"]?.stringValue
+    }
+
+    /// The parent field (and the option-row column to match) — from the server, or worked out the same way for older servers.
+    public func dependency(field name: String, among names: [String]) -> (field: String, key: String)? {
+        if let f = dependsOnField, let k = dependsOnKey { return (f, k) }
+        if module == "sections" || module == "subjects" {
+            let p = name.replacingOccurrences(of: "(section|subject)_id$", with: "class_id", options: .regularExpression)
+            return (p != name && names.contains(p)) ? (p, "class_id") : nil
+        }
+        if module == "students" {
+            let pre = name.hasSuffix("student_id") ? String(name.dropLast("student_id".count)) : name
+            if names.contains(pre + "section_id") { return (pre + "section_id", "section_id") }
+            if names.contains(pre + "class_id") { return (pre + "class_id", "class_id") }
+        }
+        return nil
     }
 }
 

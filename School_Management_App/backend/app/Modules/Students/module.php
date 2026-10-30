@@ -11,16 +11,18 @@ $family = function ($q, $user) { if (! $user->isAdmin() && ! $user->isStaff()) $
 return [
 [
     'key' => 'students', 'title' => 'Students', 'title_singular' => 'Student saved', 'group' => 'Students', 'icon' => 'school', 'order' => 10,
-    'model' => Student::class, 'with' => ['user', 'schoolClass', 'section'],
+    'model' => Student::class, 'with' => ['user', 'schoolClass', 'section.schoolClass'],
     'scope' => $family,
-    'title_fn' => fn ($m) => $m->user?->name, 'subtitle' => ['admission_no', 'class_id', 'section_id', 'roll_no'],
+    'title_fn' => fn ($m) => $m->user?->name, 'subtitle' => ['admission_no', 'section_id', 'roll_no'],
+    // Picker text: name + class-section + admission no., so two "Rahul Kumar"s can be told apart.
+    'option_fn' => fn ($m) => implode(' · ', array_filter([$m->user?->name, $m->section?->label ?: \App\Modules\Academics\Models\SchoolClass::displayName($m->schoolClass?->name), $m->admission_no])),
     'search' => ['admission_no', 'father_name', 'guardian_phone', 'aadhaar_no', 'user.name', 'user.phone'], 'sort' => 'class_id',
     'roles' => ['view' => ['all'], 'create' => ['office'], 'update' => ['office'], 'delete' => []],
     'fields' => [
         F::text('name', 'Student name', ['on' => 'user', 'required' => true, 'list' => true]),
         F::text('admission_no', 'Admission no.', ['list' => true, 'immutable' => true, 'unique' => true, 'help' => 'Permanent. Auto-generated if left blank.']),
         F::ref('class_id', 'Class', 'classes', ['required' => true, 'list' => true, 'filter' => true]),
-        F::ref('section_id', 'Section', 'sections', ['required' => true, 'list' => true, 'filter' => true]),
+        F::ref('section_id', 'Section', 'sections', ['required' => true, 'list' => true, 'filter' => true, 'help' => 'Choose the class first — only that class’s sections are listed.']),
         F::number('roll_no', 'Roll no.', ['list' => true]),
         F::image('photo', 'Photo', ['on' => 'user']),
         F::select('gender', 'Gender', ['male', 'female', 'other'], ['on' => 'user', 'filter' => true]),

@@ -48,8 +48,8 @@ fun routeFor(screen: String, appRole: String, meta: MetaRepository): String {
 }
 
 fun routeFor(item: MenuItem, appRole: String, meta: MetaRepository): String =
-    if ((item.type == "module" || item.type == "records") && meta.modules.containsKey(item.screen) && familyRoute(item.screen, appRole) == null) Routes.module(item.screen)
-    else routeFor(item.screen, appRole, meta)
+    if ((item.type == "module" || item.type == "records") && meta.modules.containsKey(item.moduleKey) && familyRoute(item.moduleKey, appRole) == null) Routes.module(item.moduleKey)
+    else routeFor(if (item.screen.startsWith("module:")) item.moduleKey else item.screen, appRole, meta)
 
 private fun familyRoute(screen: String, appRole: String) = if (appRole == "parent" || appRole == "student") familyScreens[screen] else null
 

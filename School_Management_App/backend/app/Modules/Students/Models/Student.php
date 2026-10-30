@@ -34,7 +34,7 @@ class Student extends Model
     public function getNameAttribute(): ?string { return $this->user?->name; }
     public function getClassLabelAttribute(): ?string
     {
-        $c = $this->schoolClass?->name; $s = $this->section?->name;
-        return $c ? trim($c.($s ? ' - '.$s : '')) : null;
+        $c = $this->schoolClass?->name;
+        return $c ? Section::labelFor($c, $this->section?->name, $this->section?->stream) : null;
     }
 }

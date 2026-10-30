@@ -105,7 +105,7 @@ fun PromotionScreen() {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(cl.name, Modifier.weight(0.8f), style = MaterialTheme.typography.titleSmall)
                         Icon(Icons.AutoMirrored.Outlined.ArrowForward, null, Modifier.padding(horizontal = 6.dp))
-                        Dropdown("Goes to", listOf<Pair<Int?, String>>(null to "Pass out / leave") + classes.map { it.id to it.name }, vm.mapping[cl.id], { vm.mapping[cl.id] = it }, Modifier.weight(1.2f))
+                        Dropdown("Goes to", listOf<Pair<Int?, String>>(null to "Pass out / leave") + classes.map { it.id to classDisplayName(it.name) }, vm.mapping[cl.id], { vm.mapping[cl.id] = it }, Modifier.weight(1.2f))
                     }
                 }
                 item {

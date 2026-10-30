@@ -24,5 +24,5 @@ class TimetableEntry extends Model
     public function getSubjectNameAttribute() { return $this->subject?->name; }
     public function getTeacherNameAttribute() { return $this->teacher?->name; }
     public function getDayNameAttribute() { return self::DAYS[$this->day] ?? null; }
-    public function getClassLabelAttribute() { return trim(($this->schoolClass?->name ?? '').' - '.($this->section?->name ?? ''), ' -'); }
+    public function getClassLabelAttribute() { return \App\Modules\Academics\Models\Section::labelFor($this->schoolClass?->name, $this->section?->name, $this->section?->stream); }
 }

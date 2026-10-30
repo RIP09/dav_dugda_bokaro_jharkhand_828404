@@ -171,6 +171,14 @@ class DataController extends Controller
         return $this->ok(['dry_run' => $dry, 'created' => $created, 'updated' => $updated, 'errors' => $errors, 'preview' => $preview], $msg);
     }
 
+    /** Lower-case, any dash (- – —) with or without spaces → "-", single spaces. */
+    private static function refKey(string $s): string
+    {
+        $s = mb_strtolower(trim($s));
+        $s = preg_replace('/\s*[-–—]\s*/u', '-', $s);
+        return preg_replace('/\s+/u', ' ', $s);
+    }
+
     private function coerce(array $f, $v, array &$refMaps, int $rowNo)
     {
         switch ($f['type']) {
@@ -188,9 +196,18 @@ class DataController extends Controller
                 $mod = $f['ref']['module'];
                 if (! isset($refMaps[$mod])) {
                     $rd = ModuleRegistry::get($mod);
-                    $refMaps[$mod] = $rd['model']::query()->with($rd['with'])->get()->mapWithKeys(fn ($m) => [mb_strtolower(trim(str_replace(' - ', '-', ModuleRegistry::titleFor($mod, $m)))) => $m->getKey()])->all();
+                    // Names in a sheet may be "Class 8 – A", "Class 8 - A", "Class 8-A" or "Class 8 – A (Science)": all match.
+                    $refMaps[$mod] = [];
+                    foreach ($rd['model']::query()->with($rd['with'])->get() as $m) {
+                        $aliases = [ModuleRegistry::titleFor($mod, $m), ModuleRegistry::optionFor($mod, $m)];
+                        if ($m instanceof \App\Modules\Academics\Models\Section) {
+                            $aliases[] = \App\Modules\Academics\Models\Section::labelFor($m->schoolClass?->name, $m->name);
+                            $aliases[] = ($m->schoolClass?->name ?? '').'-'.$m->name;
+                        }
+                        foreach ($aliases as $a) $refMaps[$mod][self::refKey($a)] ??= $m->getKey();
+                    }
                 }
-                $key = mb_strtolower(trim(str_replace(' - ', '-', (string) $v)));
+                $key = self::refKey((string) $v);
                 if (isset($refMaps[$mod][$key])) return $refMaps[$mod][$key];
                 throw ValidationException::withMessages([$f['name'] => "“{$v}” not found for {$f['label']}."]);
             case 'phone': return is_float($v) ? number_format($v, 0, '', '') : (string) $v;

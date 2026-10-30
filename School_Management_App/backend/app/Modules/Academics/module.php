@@ -42,20 +42,32 @@ return [
 ],
 [
     'key' => 'sections', 'title' => 'Sections', 'group' => 'Academics', 'icon' => 'view_module', 'order' => 62,
-    'model' => Section::class, 'with' => ['schoolClass'], 'title_fn' => fn ($m) => ($m->schoolClass?->name ?? '').'-'.$m->name,
-    'subtitle' => ['teacher_id', 'room'], 'sort' => 'class_id',
+    'model' => Section::class, 'with' => ['schoolClass'], 'title_fn' => fn ($m) => $m->label,
+    'subtitle' => ['teacher_id', 'room'], 'sort' => 'class_id', 'search' => ['name', 'schoolClass.name'],
     'roles' => ['view' => ['all'], 'create' => [], 'update' => [], 'delete' => []],
     'fields' => [
         F::ref('class_id', 'Class', 'classes', ['required' => true, 'list' => true, 'filter' => true]),
-        F::text('name', 'Section', ['required' => true, 'list' => true]),
+        F::text('name', 'Section', ['required' => true, 'list' => true, 'help' => 'Just the letter, e.g. A. It is always shown with its class: “Class 6 – A”.']),
+        F::select('stream', 'Stream (Class XI–XII only)', Section::STREAMS, ['list' => true, 'filter' => true, 'help' => 'Science or Commerce. Leave blank for Nursery–X.']),
         F::ref('teacher_id', 'Class teacher', 'teachers', ['list' => true]),
         F::number('capacity', 'Capacity'),
         F::text('room', 'Room'),
     ],
+    'validate' => function (array $data, $m) {
+        $stream = array_key_exists('stream', $data) ? $data['stream'] : $m?->stream;
+        $classId = $data['class_id'] ?? $m?->class_id;
+        if ($stream && $classId && ! SchoolClass::isSeniorSecondary(SchoolClass::find($classId))) {
+            throw \Illuminate\Validation\ValidationException::withMessages(['stream' => 'Stream (Science / Commerce) is only for Class XI and XII.']);
+        }
+        $name = $data['name'] ?? null;
+        if ($name !== null && $classId && Section::where('class_id', $classId)->where('name', $name)->when($m, fn ($q) => $q->whereKeyNot($m->getKey()))->exists()) {
+            throw \Illuminate\Validation\ValidationException::withMessages(['name' => 'That section already exists in this class.']);
+        }
+    },
 ],
 [
     'key' => 'subjects', 'title' => 'Subjects', 'group' => 'Academics', 'icon' => 'menu_book', 'order' => 63,
-    'model' => Subject::class, 'with' => ['schoolClass'], 'title_fn' => fn ($m) => $m->name.' ('.($m->schoolClass?->name ?? '').')',
+    'model' => Subject::class, 'with' => ['schoolClass'], 'title_fn' => fn ($m) => $m->name.' ('.SchoolClass::displayName($m->schoolClass?->name).')',
     'subtitle' => ['code', 'teacher_id'], 'search' => ['name', 'code'], 'sort' => 'class_id',
     'roles' => ['view' => ['all'], 'create' => [], 'update' => [], 'delete' => []],
     'fields' => [

@@ -35,7 +35,8 @@ return [[
     'model' => User::class, 'with' => ['children.user', 'children.schoolClass', 'children.section'],
     'base' => fn ($q) => $q->where('role', User::PARENT),
     'scope' => function ($q, $user) { if (! $user->isAdmin() && ! $user->isStaff()) $q->whereKey($user->id); },
-    'label' => 'name', 'subtitle' => ['phone', 'children_names'], 'search' => ['name', 'email', 'phone'], 'sort' => 'name',
+    'label' => 'name', 'subtitle' => ['phone', 'children_names'],
+    'option_fn' => fn ($m) => implode(' · ', array_filter([$m->name, $m->phone])), 'search' => ['name', 'email', 'phone'], 'sort' => 'name',
     'roles' => ['view' => ['employees'], 'create' => ['office'], 'update' => ['office'], 'delete' => []],
     'fields' => array_merge($personFields('Parents sign in to the Parent app with this mobile number or email.'), [
         F::text('children_names', 'Children', ['readonly' => true, 'virtual' => true, 'list' => true,

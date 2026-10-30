@@ -35,7 +35,7 @@ class ModuleListViewModel(c: AppContainer, val key: String) : BaseViewModel(c) {
     var state by mutableStateOf<Load<Unit>>(Load.Loading)
     var query by mutableStateOf("")
     val filters = mutableStateMapOf<String, String>()
-    val refOptions = mutableStateMapOf<String, List<Pair<String, String>>>()
+    val refOptions = mutableStateMapOf<String, List<RefOption>>()
     var page = 1
     var lastPage by mutableStateOf(1)
     var total by mutableStateOf(0)
@@ -57,7 +57,7 @@ class ModuleListViewModel(c: AppContainer, val key: String) : BaseViewModel(c) {
                 page = 1; lastPage = r.meta?.lastPage ?: 1; total = r.meta?.total ?: r.data.size
                 state = Load.Ok(Unit)
                 m.fields.filter { it.filter && it.type == "ref" && it.ref != null && refOptions[it.name] == null }.forEach { f ->
-                    runCatching { refOptions[f.name] = c.meta.refOptions(f.ref!!) }
+                    runCatching { refOptions[f.name] = c.meta.refChoices(f.ref!!) }
                 }
             } catch (e: CancellationException) { throw e } catch (e: Throwable) { state = Load.Err(c.errorMessage(e)) }
         }
@@ -108,9 +108,22 @@ fun ModuleListScreen(key: String) {
                             val opts: List<Pair<String, String>> = listOf("" to "All") + when (f.type) {
                                 "select" -> f.options.orEmpty().map { it.key to it.label }
                                 "bool" -> listOf("1" to "Yes", "0" to "No")
-                                else -> vm.refOptions[f.name].orEmpty()
+                                else -> {
+                                    // A Section filter lists only the chosen Class's sections (all sections, each labelled "Class 6 – A", when no class is chosen).
+                                    val dep = f.dependency(meta?.fields.orEmpty())
+                                    val parent = dep?.let { vm.filters[it.field] }
+                                    vm.refOptions[f.name].orEmpty().let { all -> if (dep != null && !parent.isNullOrBlank()) all.forParent(dep, parent) else all }.map { it.id to it.label }
+                                }
                             }
-                            Dropdown(f.title, opts, vm.filters[f.name] ?: "", { v -> vm.filters[f.name] = v; vm.refresh() }, Modifier.width(170.dp))
+                            Dropdown(f.title, opts, vm.filters[f.name] ?: "", { v ->
+                                vm.filters[f.name] = v
+                                // changing the Class filter clears a Section filter that belongs to another class
+                                meta?.fields.orEmpty().filter { it.filter && it.dependency(meta?.fields.orEmpty())?.field == f.name }.forEach { child ->
+                                    val cur = vm.filters[child.name].orEmpty()
+                                    if (cur.isNotEmpty() && v.isNotEmpty() && vm.refOptions[child.name].orEmpty().forParent(child.dependency(meta?.fields.orEmpty()), v).none { it.id == cur }) vm.filters[child.name] = ""
+                                }
+                                vm.refresh()
+                            }, Modifier.width(190.dp))
                         }
                         if (classic != null) AssistChip(onClick = { navigate(classic.second.route) }, label = { Text(classic.first) }, leadingIcon = { Icon(classic.second.icon, null, Modifier.size(18.dp)) })
                         if (meta?.permissions?.export == true) {

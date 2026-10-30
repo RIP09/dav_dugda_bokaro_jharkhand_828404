@@ -185,7 +185,7 @@ check("parent cannot mark attendance (403)", code == 403, js)
 
 print("== student")
 S, student = login("student@davdugda.in", "student123", "student")
-check("student profile has class", student["student"]["class_label"] == "Class 8 - A", student.get("student"))
+check("student profile has class", student["student"]["class_label"] == "Class 8 \u2013 A", student.get("student"))
 expect("student dashboard", "GET", "dashboard", S)
 expect("student attendance", "GET", "attendance/my", S)
 expect("student report", "GET", "report-card/my", S)

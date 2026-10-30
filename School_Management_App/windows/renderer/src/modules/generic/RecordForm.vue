@@ -6,7 +6,7 @@
       <div v-for="f in fields" :key="f.name" class="field" :class="{ span2: wideField(f) }">
         <label>{{ fieldLabel(f) }} <span v-if="f.required && !(row && f.immutable)" class="req">*</span>
           <span v-if="row && f.immutable" class="badge lock small-badge" title="Can be set only when the record is created"><Icon name="lock" />Fixed</span></label>
-        <FieldInput v-model="form[f.name]" :field="f" :row="row || {}" :module="meta.key" :invalid="!!errors[f.name]" :disabled="saving || !!row?._locked || (row && f.immutable)" />
+        <FieldInput v-model="form[f.name]" :field="f" :row="row || {}" :module="meta.key" :form="form" :fields="fields" :invalid="!!errors[f.name]" :disabled="saving || !!row?._locked || (row && f.immutable)" />
         <span v-if="errors[f.name]" class="err">{{ errors[f.name] }}</span>
         <span v-else-if="f.help" class="help">{{ f.help }}</span>
       </div>
@@ -23,7 +23,7 @@ import { ref, reactive, computed, watch } from 'vue';
 import Modal from '../../components/Modal.vue';
 import Icon from '../../components/Icon.vue';
 import FieldInput from './FieldInput.vue';
-import { formFields, fieldLabel } from './meta';
+import { formFields, fieldLabel, dependencyOf } from './meta';
 import { post, put } from '../../api/client';
 import { toast } from '../../ui/ui';
 
@@ -38,6 +38,7 @@ let original = {};
 
 watch(() => [props.open, props.row], () => {
   if (!props.open) return;
+  loading = true; setTimeout(() => { loading = false; }, 0);
   Object.keys(form).forEach(k => delete form[k]); Object.keys(errors).forEach(k => delete errors[k]); generalError.value = '';
   for (const f of fields.value) {
     let v = props.row ? props.row[f.name] : (props.defaults?.[f.name] ?? f.default ?? (f.type === 'bool' ? false : null));
@@ -46,6 +47,13 @@ watch(() => [props.open, props.row], () => {
   }
   original = JSON.parse(JSON.stringify(form));
 }, { immediate: true });
+
+// Changing the Class clears a Section (or Subject / Student) chosen for another class.
+let loading = false;
+watch(() => fields.value.map(f => { const d = dependencyOf(f, fields.value); return d ? form[d.field] : undefined; }), (now, before) => {
+  if (loading || !before) return;
+  fields.value.forEach((f, i) => { if (dependencyOf(f, fields.value) && now[i] !== before[i] && before[i] !== undefined) form[f.name] = null; });
+});
 
 async function save() {
   Object.keys(errors).forEach(k => delete errors[k]); generalError.value = '';

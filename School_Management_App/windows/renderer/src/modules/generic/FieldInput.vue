@@ -1,5 +1,6 @@
 <template>
-  <RefPicker v-if="field.type === 'ref'" :model-value="modelValue" :ref-info="field.ref" :label="labelValue" :invalid="invalid" :disabled="disabled" @update:model-value="set" />
+  <RefPicker v-if="field.type === 'ref'" :model-value="modelValue" :ref-info="field.ref" :label="labelValue" :invalid="invalid" :disabled="disabled || waiting"
+    :params="refParams" :placeholder="waiting ? 'Choose ' + (parentField ? fieldLabel(parentField) : 'the class') + ' first' : undefined" @update:model-value="set" />
   <select v-else-if="field.type === 'select'" class="input" :class="{ invalid }" :value="modelValue ?? ''" :disabled="disabled" @change="set($event.target.value === '' ? null : $event.target.value)">
     <option value="">— Choose —</option>
     <option v-for="o in field.options || []" :key="o.value" :value="o.value">{{ o.label }}</option>
@@ -23,10 +24,17 @@
 <script setup>
 import { computed, ref } from 'vue';
 import RefPicker from './RefPicker.vue';
+import { dependencyOf, fieldLabel } from './meta';
 import Icon from '../../components/Icon.vue';
 import { upload } from '../../api/client';
 import { toastError } from '../../ui/ui';
-const props = defineProps({ field: Object, modelValue: null, row: Object, invalid: Boolean, disabled: Boolean, module: String });
+const props = defineProps({ field: Object, modelValue: null, row: Object, invalid: Boolean, disabled: Boolean, module: String, form: Object, fields: Array });
+// Dependent pickers: a Section lists only the chosen Class's sections; until a Class is chosen it waits.
+const dep = computed(() => (props.form ? dependencyOf(props.field, props.fields) : null));
+const parentField = computed(() => (dep.value ? (props.fields || []).find(x => x.name === dep.value.field) : null));
+const parentValue = computed(() => (dep.value ? props.form?.[dep.value.field] : null));
+const waiting = computed(() => !!dep.value && (parentValue.value === null || parentValue.value === undefined || parentValue.value === ''));
+const refParams = computed(() => (dep.value && !waiting.value ? { ['filter[' + dep.value.key + ']']: parentValue.value, per_page: 200 } : undefined));
 const emit = defineEmits(['update:modelValue']);
 const uploading = ref(false);
 const preview = ref(props.row?.[props.field.name + '_url'] || null);
