@@ -1,7 +1,7 @@
 # Downloads – DAV School Management System v2.0.0
 
 The installers are too large to keep inside this git repository, so they are served from the free demo server
-(and the public website's Downloads section). Check a download against its SHA-256 if you like
+(and the public website's Downloads page: https://dav-dugda-sms.sites.tab.bot/downloads). Check a download against its SHA-256 if you like
 (`certutil -hashfile FILE SHA256` on Windows, `sha256sum FILE` on Linux/Mac).
 
 | File | Size | Link | SHA-256 |
@@ -12,6 +12,7 @@ The installers are too large to keep inside this git repository, so they are ser
 | `DAV_Student_v2.0.0.apk` | 18.4 MB | [Download](https://dav-dugda-sms.sites.tab.bot/downloads/DAV_Student_v2.0.0.apk) | `b177e8779a8bb3a050a146fa9de74a9c6b3f8efab3398080d64ceda0795b617c` |
 | `DAV_School_Management_Setup_2.0.0.exe` | 72.3 MB | [Download](https://dav-dugda-sms.sites.tab.bot/downloads/DAV_School_Management_Setup_2.0.0.exe) | `fe1bb94845cc8eb39d6eac1cbba83d1a218329e26a478f161516905d2a8f109e` |
 | `DAV_School_Management_Portable_2.0.0.zip` | 97.7 MB | [Download](https://dav-dugda-sms.sites.tab.bot/downloads/DAV_School_Management_Portable_2.0.0.zip) | `c4007b8fcbe69e0412e98f3faf233d361bbd85ad46cef92959d9bb2997686ad4` |
+| `DAV_Go_Live_Guide.pdf` | 1.2 MB | [Download](https://dav-dugda-sms.sites.tab.bot/downloads/DAV_Go_Live_Guide.pdf) | `a716688702aba734302db67ddcb8b4abb76eddc4d0c5a8e726b8671cec98c9aa` |
 
 ## Which file do I need?
 
@@ -34,3 +35,8 @@ All apps start with the demo server. Point them at your own server from the logi
 3. Drag the six files from the table above into the *Attach binaries* box, wait for the uploads, click **Publish release**.
 
 Excel import templates: `docs/import_templates/` (29 ready sheets, each with a *How to fill* tab).
+
+## Public school website
+
+Live demo: https://dav-dugda-sms.sites.tab.bot/ · Website CMS: https://dav-dugda-sms.sites.tab.bot/website-admin (login `webadmin@davdugda.in` / `webadmin123` — change it after first sign-in).
+Source: `website/` (loaded by the backend; see `website/README.md`). Content facts and sources: `docs/school_facts.md`.
